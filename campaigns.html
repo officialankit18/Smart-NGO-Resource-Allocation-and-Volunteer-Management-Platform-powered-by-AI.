@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Campaigns - NGOHubX</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="index.css">
+
+    <style>
+        .campaigns-hero {
+            padding: 120px 20px 80px;
+            text-align: center;
+            background: linear-gradient(135deg, #e8f5e9, #f1fff1);
+        }
+
+        .campaigns-hero h1 {
+            font-size: 46px;
+            font-weight: 800;
+            color: var(--primary-green);
+            margin-bottom: 12px;
+        }
+
+        .campaigns-hero p {
+            max-width: 850px;
+            margin: auto;
+            font-size: 16px;
+            line-height: 1.7;
+            color: #444;
+        }
+
+        .filter-bar {
+            margin-top: 35px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            border: 2px solid rgba(46, 125, 50, 0.3);
+            padding: 10px 18px;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            color: #2e7d32;
+            transition: 0.3s;
+        }
+
+        .filter-btn:hover {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .filter-btn.active {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .campaign-section {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .campaign-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .campaign-card {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 2px solid rgba(46, 125, 50, 0.12);
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.12);
+            transition: 0.3s ease;
+        }
+
+        .campaign-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0px 14px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .campaign-img {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .campaign-content {
+            padding: 22px;
+        }
+
+        .campaign-tag {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            background: rgba(46, 125, 50, 0.12);
+            color: #2e7d32;
+            margin-bottom: 12px;
+        }
+
+        .campaign-content h3 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #1b5e20;
+            margin-bottom: 10px;
+        }
+
+        .campaign-content p {
+            font-size: 13px;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .progress-wrap {
+            margin-top: 12px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 60%;
+            background: linear-gradient(135deg, #43a047, #1b5e20);
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 8px;
+            color: #444;
+        }
+
+        .campaign-actions {
+            margin-top: 18px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-donate {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, #43a047, #1b5e20);
+            color: white;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-donate:hover {
+            transform: scale(1.03);
+        }
+
+        .btn-details {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid #2e7d32;
+            background: white;
+            color: #2e7d32;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-details:hover {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #43a047, #1b5e20);
+            color: white;
+        }
+
+        .cta-section h2 {
+            font-size: 34px;
+            font-weight: 900;
+            margin-bottom: 15px;
+        }
+
+        .cta-section p {
+            max-width: 850px;
+            margin: auto;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            color: #e8f5e9;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 800;
+            text-decoration: none;
+            border: 2px solid white;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .cta-btn:hover {
+            background: white;
+            color: #1b5e20;
+        }
+
+        footer {
+            background: #0f172a;
+            padding: 25px;
+            text-align: center;
+            color: white;
+            font-size: 13px;
+        }
+
+        @media (max-width: 950px) {
+            .campaign-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER SAME AS INDEX -->
+    <header class="main-header">
+        <div class="container">
+
+            <div class="logo">
+                <img src="logoNGO.jpeg" alt="NGOHubX Logo" class="logo-img"
+                    style="height: 60px; width: auto; border-radius: 8px; object-fit: contain;">
+            </div>
+
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="Index.html">Home</a></li>
+                    <li><a href="about.html">About NGOHubX</a></li>
+                    <li><a href="work.html">How It Works</a></li>
+                    <li><a href="campaigns.html" class="active">Live Campaigns</a></li>
+                    <li><a href="#" style="color:#ef4444; font-weight:700;" onclick="openEmergencyModal(); return false;"><i class="fas fa-exclamation-triangle" style="margin-right:5px;"></i>Emergency</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+
+                <button onclick="openAuthModal()" class="btn-login"
+                    style="background:transparent; border:none; color:var(--text-dark); font-weight:600; cursor:pointer;">
+                    Login
+                </button>
+
+                <a href="#" class="btn-support" onclick="openAuthModal(); return false;">Join Now</a>
+
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <div class="logo">
+                <img src="logoNGO.jpeg" alt="NGOHubX Logo" class="logo-img">
+            </div>
+            <button class="close-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <nav class="mobile-nav">
+            <a href="Index.html">Home</a>
+            <a href="about.html">About NGOHubX</a>
+            <a href="work.html">How It Works</a>
+            <a href="campaigns.html">Live Campaigns</a>
+            <a href="#" style="color:#ef4444; font-weight:700;" onclick="openEmergencyModal(); return false;"><i class="fas fa-exclamation-triangle" style="margin-right:5px;"></i>Emergency</a>
+            <a href="#" onclick="toggleMobileMenu(); openAuthModal(); return false;">Login</a>
+            <a href="#" class="btn-support" onclick="toggleMobileMenu(); openAuthModal(); return false;">Join Now</a>
+        </nav>
+    </div>
+
+
+    <!-- HERO -->
+    <section class="campaigns-hero">
+        <div class="container">
+            <h1>Live Campaigns</h1>
+            <p>
+                Explore ongoing NGOHubX verified campaigns. Support emergency relief, healthcare, education,
+                and disaster response initiatives across India with real-time transparency and impact tracking.
+            </p>
+
+            <div class="filter-bar">
+                <button class="filter-btn active">All</button>
+                <button class="filter-btn">Medical</button>
+                <button class="filter-btn">Disaster Relief</button>
+                <button class="filter-btn">Education</button>
+                <button class="filter-btn">Food Support</button>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- CAMPAIGN LIST -->
+    <section class="campaign-section">
+        <div class="container">
+            <h2 class="section-title">Ongoing Verified Campaigns</h2>
+            <p class="section-subtitle">
+                Each campaign is verified by partner NGOs and monitored through task tracking and transparency
+                dashboards.
+            </p>
+
+            <div class="campaign-grid">
+
+                <!-- CARD 1 -->
+                <div class="campaign-card">
+                    <img class="campaign-img"
+                        src="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=1200&q=80"
+                        alt="Medical Support">
+
+                    <div class="campaign-content">
+                        <span class="campaign-tag">Medical</span>
+                        <h3>Free Medical Camp for Rural Villages</h3>
+                        <p>Providing medicines, checkups, and emergency healthcare support for underserved rural
+                            families.</p>
+
+                        <div class="progress-wrap">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width:70%;"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>Raised ₹3.5L</span>
+                                <span>Goal ₹5L</span>
+                            </div>
+                        </div>
+
+                        <div class="campaign-actions">
+                            <button class="btn-donate" onclick="openDonationModal(event)">Donate</button>
+                            <button class="btn-details">Details</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- CARD 2 -->
+                <div class="campaign-card">
+                    <img class="campaign-img"
+                        src="https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=1200&q=80"
+                        alt="Food Relief">
+
+                    <div class="campaign-content">
+                        <span class="campaign-tag">Food Support</span>
+                        <h3>Food Kits for Flood-Affected Families</h3>
+                        <p>Emergency ration kits, clean water supply, and hygiene support for flood-hit communities.</p>
+
+                        <div class="progress-wrap">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width:55%;"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>Raised ₹2.2L</span>
+                                <span>Goal ₹4L</span>
+                            </div>
+                        </div>
+
+                        <div class="campaign-actions">
+                            <button class="btn-donate" onclick="openDonationModal(event)">Donate</button>
+                            <button class="btn-details">Details</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- CARD 3 -->
+                <div class="campaign-card">
+                    <img class="campaign-img"
+                        src="https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=1200&q=80"
+                        alt="Education Support">
+
+                    <div class="campaign-content">
+                        <span class="campaign-tag">Education</span>
+                        <h3>School Kits for Underprivileged Children</h3>
+                        <p>Providing books, uniforms, and digital learning access for children in slum areas.</p>
+
+                        <div class="progress-wrap">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width:40%;"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>Raised ₹1.2L</span>
+                                <span>Goal ₹3L</span>
+                            </div>
+                        </div>
+
+                        <div class="campaign-actions">
+                            <button class="btn-donate" onclick="openDonationModal(event)">Donate</button>
+                            <button class="btn-details">Details</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- CARD 4 -->
+                <div class="campaign-card">
+                    <img class="campaign-img"
+                        src="https://images.unsplash.com/photo-1542359649-31e03cd4d909?auto=format&fit=crop&w=1200&q=80"
+                        alt="Disaster Relief">
+
+                    <div class="campaign-content">
+                        <span class="campaign-tag">Disaster Relief</span>
+                        <h3>Earthquake Emergency Shelter Support</h3>
+                        <p>Providing temporary shelters, blankets, and emergency response teams for disaster survivors.
+                        </p>
+
+                        <div class="progress-wrap">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width:80%;"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>Raised ₹8L</span>
+                                <span>Goal ₹10L</span>
+                            </div>
+                        </div>
+
+                        <div class="campaign-actions">
+                            <button class="btn-donate" onclick="openDonationModal(event)">Donate</button>
+                            <button class="btn-details">Details</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- CARD 5 -->
+                <div class="campaign-card">
+                    <img class="campaign-img"
+                        src="https://images.unsplash.com/photo-1604909053197-93c4fcbaf51b?auto=format&fit=crop&w=1200&q=80"
+                        alt="Women Safety">
+
+                    <div class="campaign-content">
+                        <span class="campaign-tag">Safety</span>
+                        <h3>Women Safety and Awareness Drive</h3>
+                        <p>Community workshops, safety helpline awareness, and emergency reporting support in urban
+                            zones.</p>
+
+                        <div class="progress-wrap">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width:35%;"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>Raised ₹70K</span>
+                                <span>Goal ₹2L</span>
+                            </div>
+                        </div>
+
+                        <div class="campaign-actions">
+                            <button class="btn-donate" onclick="openDonationModal(event)">Donate</button>
+                            <button class="btn-details">Details</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- CARD 6 -->
+                <div class="campaign-card">
+                    <img class="campaign-img"
+                        src="https://images.unsplash.com/photo-1598257008406-6f12b989b3f9?auto=format&fit=crop&w=1200&q=80"
+                        alt="Water Support">
+
+                    <div class="campaign-content">
+                        <span class="campaign-tag">Water Support</span>
+                        <h3>Clean Drinking Water for Drought Areas</h3>
+                        <p>Installing water tanks and distributing purified drinking water in drought-hit villages.</p>
+
+                        <div class="progress-wrap">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width:65%;"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>Raised ₹4L</span>
+                                <span>Goal ₹6L</span>
+                            </div>
+                        </div>
+
+                        <div class="campaign-actions">
+                            <button class="btn-donate" onclick="openDonationModal(event)">Donate</button>
+                            <button class="btn-details">Details</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <h2>Want to Launch a Campaign?</h2>
+        <p>
+            Verified NGOs can start campaigns on NGOHubX, manage donations transparently,
+            and coordinate volunteers for real-time execution.
+        </p>
+        <a href="login.html" class="cta-btn">Start as NGO</a>
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer>
+        <p><b>NGOHubX</b> - Smart Resource Allocation Platform</p>
+        <p>Email: support@ngohubx.org | Phone: +91-XXXXXXXXXX</p>
+        <p>&copy; 2026 NGOHubX. All rights reserved.</p>
+    </footer>
+
+
+    <!-- SCRIPT -->
+        <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <script src="firebase.js"></script>
+    <script src="index.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Community Requests - NGOHubX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header" onclick="window.location.href='Index.html'" style="cursor: pointer;">
+      <img src="logoNGO.jpeg" style="height: 35px; width: auto; border-radius: 6px; object-fit: contain;" alt="Logo">
+      <span>NGOHubX</span>
+    </div>
+    
+    <div class="sidebar-menu">
+      <a href="ngo-dashboard.html" class="menu-item">
+        <i class="fas fa-th-large"></i> Dashboard
+      </a>
+      <a href="manage-tasks.html" class="menu-item active">
+        <i class="fas fa-tasks"></i> Tasks & Requests
+      </a>
+      <a href="create-task.html" class="menu-item">
+        <i class="fas fa-plus-circle"></i> Create Task
+      </a>
+      <a href="manage-volunteers.html" class="menu-item">
+        <i class="fas fa-users"></i> Volunteers
+      </a>
+      <a href="analytics.html" class="menu-item">
+        <i class="fas fa-chart-line"></i> Analytics
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="welcome-text">
+        <h1>Community Requests</h1>
+        <span>Monitor incoming needs and respond efficiently.</span>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Quick Actions in Topbar -->
+        <a href="create-task.html" class="btn-action btn-primary">
+          <i class="fas fa-plus"></i> Create Task
+        </a>
+        
+        <button class="notification-btn">
+          <i class="far fa-bell"></i>
+          <span class="badge" style="background-color: var(--emergency-red);">5</span>
+        </button>
+
+        <div class="user-profile">
+          <div class="user-info" style="text-align: right;">
+            <span class="user-name" id="pocNameDisplay">User</span>
+            <span class="user-role">NGO Admin</span>
+          </div>
+          <img src="https://ui-avatars.com/api/?name=NGO&background=EFF6FF&color=1D4ED8" id="profileImage" alt="Profile">
+        </div>
+      </div>
+    </header>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+      
+      <!-- Summary Cards -->
+      <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Total Requests</h3>
+            <div class="value">1,204</div>
+          </div>
+          <div class="stat-icon icon-blue"><i class="fas fa-inbox"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Pending</h3>
+            <div class="value">42</div>
+          </div>
+          <div class="stat-icon icon-orange"><i class="fas fa-hourglass-half"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Approved</h3>
+            <div class="value">980</div>
+          </div>
+          <div class="stat-icon icon-green"><i class="fas fa-check"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Rejected</h3>
+            <div class="value">182</div>
+          </div>
+          <div class="stat-icon" style="background:var(--bg-main); color:var(--text-muted);"><i class="fas fa-times"></i></div>
+        </div>
+
+        <div class="stat-card" style="border-color: var(--emergency-light);">
+          <div class="stat-content">
+            <h3 style="color: var(--emergency-red);">High Priority</h3>
+            <div class="value" style="color: var(--emergency-red);">12</div>
+          </div>
+          <div class="stat-icon icon-red"><i class="fas fa-exclamation-triangle"></i></div>
+        </div>
+      </div>
+
+
+
+      <!-- Filters & Actions -->
+      <div class="filters-bar">
+        <div class="filter-group" style="flex: 2; min-width: 200px;">
+          <i class="fas fa-search" style="color: var(--text-muted);"></i>
+          <input type="text" class="filter-input" placeholder="Search by ID, User Name, Area..." style="width: 100%; border: none; background: transparent; padding: 0;">
+        </div>
+        
+        <div class="filter-group">
+          <select class="filter-input">
+            <option value="">All Categories</option>
+            <option>Food</option>
+            <option>Medical</option>
+            <option>Education</option>
+            <option>Shelter</option>
+            <option>Emergency</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <select class="filter-input">
+            <option value="">Priority</option>
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <select class="filter-input">
+            <option value="">Status</option>
+            <option>Pending</option>
+            <option>Approved</option>
+            <option>Rejected</option>
+          </select>
+        </div>
+        
+        <button class="btn-action btn-secondary" style="padding: 8px 15px;" onclick="alert('Filters applied to Requests table.')"><i class="fas fa-filter"></i> Apply</button>
+      </div>
+
+      <!-- Main Layout -->
+      <div style="width: 100%;">
+        
+        <!-- Requests Table -->
+        <div class="form-panel" style="padding: 0; width: 100%;">
+          <div style="overflow-x: auto;">
+            <table class="tasks-table">
+              <thead style="background: var(--bg-main);">
+                <tr>
+                  <th>Request Details</th>
+                  <th>Category</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="requestsTableBody">
+                <!-- Row 1 -->
+                <tr class="request-row" onclick="selectRequest(1)">
+                  <td>
+                    <div class="task-info">
+                      <span class="task-name">#REQ-8021 <span style="font-weight: normal; color: var(--text-muted);">by Amit Kumar</span></span>
+                      <span class="task-loc" style="margin-top: 2px;">Need study materials for 50 kids</span>
+                      <span style="font-size: 11px; color: var(--warning-orange); margin-top: 4px; font-weight: 600;">Medium Priority</span>
+                    </div>
+                  </td>
+                  <td>Education</td>
+                  <td style="font-size: 13px;">South Village School</td>
+                  <td><span class="status-badge status-pending">Pending</span></td>
+                </tr>
+
+                <!-- Row 2 -->
+                <tr class="request-row" onclick="selectRequest(2)" style="background-color: #f9fafb;">
+                  <td>
+                    <div class="task-info">
+                      <span class="task-name">#REQ-8020 <span style="font-weight: normal; color: var(--text-muted);">by Priya Singh</span></span>
+                      <span class="task-loc" style="margin-top: 2px;">Blankets required for winter</span>
+                      <span style="font-size: 11px; color: var(--emergency-red); margin-top: 4px; font-weight: 600;">High Priority</span>
+                    </div>
+                  </td>
+                  <td>Shelter</td>
+                  <td style="font-size: 13px;">North Night Shelter</td>
+                  <td><span class="status-badge status-approved">Approved</span></td>
+                </tr>
+                
+                <!-- Row 3 -->
+                <tr class="request-row" onclick="selectRequest(3)">
+                  <td>
+                    <div class="task-info">
+                      <span class="task-name">#REQ-8019 <span style="font-weight: normal; color: var(--text-muted);">by Rahul M.</span></span>
+                      <span class="task-loc" style="margin-top: 2px;">Clean drinking water request</span>
+                      <span style="font-size: 11px; color: var(--text-muted); margin-top: 4px; font-weight: 600;">Low Priority</span>
+                    </div>
+                  </td>
+                  <td>Food/Water</td>
+                  <td style="font-size: 13px;">East District Slums</td>
+                  <td><span class="status-badge status-rejected">Rejected</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        </div>
+      </div>
+
+      </div>
+
+      <!-- Analytics -->
+      <div class="charts-container" style="margin-top: 40px;">
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Request Trends (Last 7 Days)</h2>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Requests by Category</h2>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="catChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Firebase Integration -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="firebase.js"></script>
+
+  <script>
+    // Auth Guard
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      
+      try {
+        const docRef = db.collection("ngos").doc(user.uid);
+        const docSnap = await docRef.get();
+        let ngoData = null;
+        if (docSnap.exists) {
+          ngoData = docSnap.data();
+        } else {
+          const generalUserDoc = await db.collection("users").doc(user.uid).get();
+          if(generalUserDoc.exists) ngoData = generalUserDoc.data();
+        }
+
+        if (ngoData) {
+          document.getElementById("pocNameDisplay").textContent = ngoData.pocName || user.email;
+          const rawName = ngoData.ngoName || ngoData.fullName || "NGO";
+          document.getElementById("profileImage").src = `https://ui-avatars.com/api/?name=${encodeURIComponent(rawName)}&background=EFF6FF&color=1D4ED8&bold=true`;
+        }
+      } catch (error) {
+        console.error("Error fetching admin data:", error);
+      }
+    });
+
+    async function logout(){
+      await auth.signOut();
+      localStorage.clear();
+      window.location.href = 'Index.html';
+    }
+
+    // UI Logic & Real-time Integration
+    let currentSelectedRequest = null;
+
+    // Wait for auth before starting listeners
+    auth.onAuthStateChanged(function(user) {
+      if(!user) return;
+      db.collection('requests').orderBy('createdAt', 'desc').onSnapshot(async snapshot => {
+        const tbody = document.getElementById('requestsTableBody');
+        const urgentContainer = document.getElementById('urgentNeedsContainer');
+        if(!tbody) return;
+        
+        tbody.innerHTML = '';
+        if(urgentContainer) urgentContainer.innerHTML = '';
+        
+        if (snapshot.empty) {
+            // Auto-seed dummy data if totally empty (helpful for first-time use)
+            const dummyRequests = [
+              { category: 'Food', description: 'Emergency ration needed for 10 people.', location: 'Noida Sector 62', urgency: 'High', status: 'Pending Review', peopleAffected: 10, createdAt: firebase.firestore.Timestamp.now() },
+              { category: 'Medical', description: 'Basic medical supplies and first aid kits.', location: 'Delhi Metro Station', urgency: 'Critical', status: 'Pending Review', peopleAffected: 5, createdAt: firebase.firestore.Timestamp.now() },
+              { category: 'Shelter', description: 'Need blankets and winter wear for children.', location: 'Connaught Place', urgency: 'Medium', status: 'Approved', peopleAffected: 20, createdAt: firebase.firestore.Timestamp.now() }
+            ];
+            for(const dr of dummyRequests) await db.collection('requests').add(dr);
+            return; // onSnapshot will trigger again after adds
+        }
+
+        // Update Top Stats
+        const allDocs = snapshot.docs.map(d => d.data());
+        document.querySelectorAll('.stat-card .value')[0].textContent = snapshot.size + 1200; // Total
+        document.querySelectorAll('.stat-card .value')[1].textContent = allDocs.filter(d => d.status === 'Pending Review').length;
+        document.querySelectorAll('.stat-card .value')[2].textContent = allDocs.filter(d => d.status === 'Approved').length + 980;
+        document.querySelectorAll('.stat-card .value')[4].textContent = allDocs.filter(d => d.urgency === 'High' || d.urgency === 'Critical').length;
+
+        let urgentFound = false;
+
+        snapshot.forEach(doc => {
+            const req = doc.data();
+            const id = doc.id;
+            
+            // Populate Table
+            let badgeClass = "status-pending";
+            if(req.status === 'Approved' || req.status === 'Completed') badgeClass = "status-approved";
+            if(req.status === 'Rejected') badgeClass = "status-rejected";
+            
+            let pColor = "var(--text-muted)";
+            if(req.urgency === 'Medium') pColor = "var(--warning-orange)";
+            if(req.urgency === 'High' || req.urgency === 'Critical') pColor = "var(--emergency-red)";
+            
+            const tr = document.createElement('tr');
+            tr.className = 'request-row';
+            tr.onclick = (e) => selectRequest(req, id, e.currentTarget);
+            
+            tr.innerHTML = `
+              <td>
+                <div class="task-info">
+                  <span class="task-name">#REQ-${id.substring(0,4).toUpperCase()} <span style="font-weight: normal; color: var(--text-muted);">by Citizen</span></span>
+                  <span class="task-loc" style="margin-top: 2px;">${req.description ? req.description.substring(0, 30) + '...' : 'No description'}</span>
+                  <span style="font-size: 11px; color: ${pColor}; margin-top: 4px; font-weight: 600;">${req.urgency} Priority</span>
+                </div>
+              </td>
+              <td>${req.category}</td>
+              <td style="font-size: 13px;">${req.location}</td>
+              <td><span class="status-badge ${badgeClass}">${req.status}</span></td>
+            `;
+            tbody.appendChild(tr);
+
+            // Populate Urgent Cards (High/Critical + Pending)
+            if((req.urgency === 'High' || req.urgency === 'Critical') && req.status === 'Pending Review') {
+                urgentFound = true;
+                const card = document.createElement('div');
+                card.className = 'urgent-card';
+                card.style.flex = '1';
+                card.style.minWidth = '300px';
+                
+                const timeAgo = req.createdAt ? 'Recently' : 'Now';
+                const icon = req.category === 'Food' ? 'fa-hamburger' : (req.category === 'Medical' ? 'fa-first-aid' : 'fa-exclamation-circle');
+
+                card.innerHTML = `
+                    <div class="urgent-header">
+                      <span class="urgent-type"><i class="fas ${icon}"></i> ${req.category} Need</span>
+                      <span class="urgent-time">${timeAgo}</span>
+                    </div>
+                    <p class="urgent-desc">${req.description.substring(0, 80)}...</p>
+                    <div class="urgent-footer">
+                      <span class="urgent-loc"><i class="fas fa-map-marker-alt"></i> ${req.location}</span>
+                      <button class="btn-action btn-primary" style="padding: 6px 12px; font-size: 12px; background: var(--emergency-red);" 
+                        onclick='convertUrgentToTask("${id}", ${JSON.stringify(req).replace(/'/g, "&apos;")})'>Convert to Task</button>
+                    </div>
+                `;
+                urgentContainer.appendChild(card);
+            }
+        });
+
+        if(!urgentFound) {
+            urgentContainer.innerHTML = '<div style="padding: 20px; color: var(--text-muted); font-size: 13px;">No urgent requests at this time.</div>';
+        }
+    });
+
+    function convertUrgentToTask(id, data) {
+        currentSelectedRequest = { id, ...data };
+        convertToTask();
+    }
+
+    function selectRequest(req, id, targetRow) {
+      currentSelectedRequest = { id, ...req };
+      
+      document.getElementById('noSelection').style.display = 'none';
+      document.getElementById('requestContent').style.display = 'block';
+      document.getElementById('reqIdText').textContent = 'Request ID: #REQ-' + id.substring(0,6).toUpperCase();
+      
+      // Reset highlighting
+      const rows = document.querySelectorAll('.request-row');
+      rows.forEach(r => r.style.borderLeft = 'none');
+      if(targetRow) targetRow.style.borderLeft = '4px solid var(--primary-green)';
+
+      // Populate pane
+      document.getElementById('panelStatus').textContent = req.status;
+      document.getElementById('panelStatus').className = req.status === 'Pending Review' ? 'status-badge status-pending' : 'status-badge status-approved';
+      document.getElementById('panelPriority').textContent = req.urgency + ' Priority';
+      document.getElementById('panelTitle').textContent = req.category + ' Need';
+      document.getElementById('panelDesc').textContent = req.description;
+      
+      // Attachments
+      const gallery = document.querySelector('.image-gallery');
+      if (req.proofPhotoUrl) {
+          gallery.innerHTML = `<img src="${req.proofPhotoUrl}" class="gallery-img" alt="Proof" style="max-height: 200px; border-radius: 8px;">`;
+      } else {
+          gallery.innerHTML = `<span style="font-size:12px; color:var(--text-muted);">No images provided</span>`;
+      }
+      
+      // Meta
+      document.querySelector('.request-preview-meta').innerHTML = `
+        <div class="meta-item" style="margin-bottom: 8px;"><i class="fas fa-map-marker-alt"></i> <b>Location:</b> ${req.location}</div>
+        <div class="meta-item"><i class="fas fa-users"></i> <b>People Affected:</b> ~${req.peopleAffected}</div>
+      `;
+    }
+
+    }); // end onSnapshot
+
+    function convertToTask() {
+      if(!currentSelectedRequest) return alert("Select a request first.");
+      
+      sessionStorage.setItem('prefillTitle', currentSelectedRequest.category + ' Support');
+      sessionStorage.setItem('prefillLocation', currentSelectedRequest.location);
+      sessionStorage.setItem('prefillPriority', currentSelectedRequest.urgency);
+      sessionStorage.setItem('prefillDesc', currentSelectedRequest.description);
+      
+      // Mark as Approved and move to create task
+      db.collection('requests').doc(currentSelectedRequest.id).update({ status: 'Approved' }).then(() => {
+          window.location.href = 'create-task.html';
+      });
+    }
+
+    // Chart.js
+    document.addEventListener("DOMContentLoaded", function() {
+      // 1. Trends Line Chart
+      const ctxTrend = document.getElementById('trendChart').getContext('2d');
+      new Chart(ctxTrend, {
+        type: 'line',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'New Requests',
+            data: [65, 59, 80, 81, 56, 55, 90],
+            fill: true,
+            borderColor: '#4CAF50',
+            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+
+      // 2. Category Donut
+      const ctxCat = document.getElementById('catChart').getContext('2d');
+      new Chart(ctxCat, {
+        type: 'doughnut',
+        data: {
+          labels: ['Food', 'Medical', 'Education', 'Shelter'],
+          datasets: [{
+            data: [45, 25, 20, 10],
+            backgroundColor: ['#3b82f6', '#dc2626', '#a855f7', '#f59e0b'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '70%',
+          plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+
+

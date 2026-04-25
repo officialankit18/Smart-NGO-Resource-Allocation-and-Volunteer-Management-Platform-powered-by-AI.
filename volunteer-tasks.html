@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Volunteer Tasks - NGOHubX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <style>
+    /* Volunteer Tasks Specific Styles */
+    .tabs-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      padding: 10px 20px;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .tab-btn:hover {
+      color: var(--primary-dark);
+    }
+
+    .tab-btn.active {
+      color: var(--primary-green);
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -11px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--primary-green);
+      border-radius: 3px 3px 0 0;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .vol-task-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .vol-task-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .vol-task-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-light);
+    }
+
+    .task-reward {
+      background: #fef3c7;
+      color: #d97706;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Modal Overlay */
+    .task-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .task-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background-color: var(--bg-white);
+      padding: 30px;
+      border-radius: var(--radius-lg);
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: var(--transition);
+    }
+
+    .task-modal.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    /* File Upload Area */
+    .upload-area {
+      border: 2px dashed var(--primary-green);
+      background: var(--primary-light);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 15px;
+      margin-bottom: 20px;
+    }
+
+    .upload-area:hover {
+      background: #dcfce7;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar for Volunteer -->
+  <aside class="sidebar">
+    <div class="sidebar-header" onclick="window.location.href='Index.html'" style="cursor: pointer;">
+      <img src="logoNGO.jpeg" style="height: 35px; width: auto; border-radius: 6px; object-fit: contain;" alt="Logo">
+      <span>NGOHubX</span>
+    </div>
+
+    <div class="sidebar-menu">
+      <a href="volunteer-dashboard.html" class="menu-item">
+        <i class="fas fa-th-large"></i> Dashboard
+      </a>
+      <a href="volunteer-tasks.html" class="menu-item active">
+        <i class="fas fa-search-location"></i> Find Tasks
+      </a>
+      <a href="volunteer-tasks.html" class="menu-item">
+        <i class="fas fa-clipboard-list"></i> My Tasks
+      </a>
+      <a href="volunteer-leaderboard.html" class="menu-item">
+        <i class="fas fa-trophy"></i> Leaderboard
+      </a>
+      <a href="volunteer-profile.html" class="menu-item">
+        <i class="fas fa-user-circle"></i> My Profile
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="topbar">
+      <div class="welcome-text">
+        <h1>Volunteer Tasks</h1>
+        <span>Manage your assigned, available, and completed tasks efficiently.</span>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="notification-btn" onclick="window.location.href='volunteer-notifications.html'">
+          <i class="far fa-bell"></i>
+          <span class="badge"
+            style="background-color: var(--warning-orange); position:absolute; top:-5px; right:-5px;">2</span>
+        </button>
+        <div class="user-profile">
+          <div class="user-info" style="text-align: right;">
+            <span class="user-name" id="volNameDisplay">Volunteer</span>
+            <span class="user-role">Verified</span>
+          </div>
+          <img src="https://ui-avatars.com/api/?name=Volunteer&background=EFF6FF&color=1D4ED8" id="profileImage"
+            alt="Profile">
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+
+      <!-- Filters -->
+      <div class="filters-bar" style="background:#fff;">
+        <div class="filter-group" style="flex: 2; min-width: 200px;">
+          <i class="fas fa-search" style="color: var(--text-muted);"></i>
+          <input type="text" class="filter-input" placeholder="Search tasks, locations, NGOs..."
+            style="width: 100%; border: none; outline: none;">
+        </div>
+        <div class="filter-group"><select class="filter-input">
+            <option>Any Category</option>
+            <option>Food</option>
+            <option>Medical</option>
+          </select></div>
+        <div class="filter-group"><select class="filter-input">
+            <option>Distance (Any)</option>
+            <option>
+              < 5km</option>
+            <option>
+              < 10km</option>
+          </select></div>
+        <div class="filter-group"><select class="filter-input">
+            <option>Priority</option>
+            <option>Critical</option>
+            <option>High</option>
+          </select></div>
+        <button class="btn-action btn-secondary" style="padding: 6px 15px;"><i class="fas fa-filter"></i> Apply</button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchTab('available')"><i class="fas fa-globe"></i> Available
+          Tasks</button>
+        <button class="tab-btn" onclick="switchTab('assigned')"><i class="fas fa-list-ul"></i> My Assigned Tasks <span
+            class="badge" id="assignedBadgeCount" style="position:relative; top:-2px; margin-left:5px;">0</span></button>
+        <button class="tab-btn" onclick="switchTab('completed')"><i class="fas fa-check-circle"></i> Completed
+          History</button>
+      </div>
+
+      <!-- TAB: Available Tasks -->
+      <div id="tab-available" class="tab-content active">
+        <div class="vol-task-grid" id="containerAvailable">
+          <p style="padding: 20px; color: var(--text-muted); width: 100%; text-align: center;">Loading available
+            tasks...</p>
+        </div>
+      </div>
+
+      <!-- TAB: Assigned Tasks (My Tasks) -->
+      <div id="tab-assigned" class="tab-content">
+        <div class="vol-task-grid" id="containerAssigned">
+          <p style="padding: 20px; color: var(--text-muted); width: 100%; text-align: center;">Loading your tasks...</p>
+        </div>
+      </div>
+
+      <!-- TAB: Completed Tasks -->
+      <div id="tab-completed" class="tab-content">
+        <div class="panel" id="containerCompleted">
+          <p style="padding: 20px; color: var(--text-muted); width: 100%; text-align: center;">Loading completed
+            history...</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modal: Task Details -->
+  <div class="task-modal" id="taskDetailModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <span class="status-badge status-pending" id="modalBadge">Urgent Request</span>
+          <h2 style="font-size:22px; margin-top:10px; color:var(--text-dark);" id="modalTitle">Emergency Delivery Req.
+          </h2>
+          <span style="font-size:12px; color:var(--text-muted);"><i class="fas fa-building"></i> Red Cross NGO</span>
+        </div>
+        <button class="modal-close" onclick="closeModal('taskDetailModal')"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div style="font-size:14px; color:var(--text-dark); line-height:1.6; margin-bottom:20px;">
+        <p><strong>Description:</strong> We desperately need volunteers to transport B-Negative blood bags from the
+          central repository to the Southern Clinic within the next two hours. A vehicle is heavily recommended.</p>
+        <p style="margin-top:10px;"><strong>Requirements:</strong> Valid driving license, quick response time.</p>
+        <p style="margin-top:10px;"><strong>Contact POC:</strong> Dr. Verma (+91 91234 91234)</p>
+      </div>
+
+      <!-- Map Snapshot -->
+      <div
+        style="height: 120px; background-color: #e5e7eb; border-radius: var(--radius-md); margin-bottom: 20px; display: flex; align-items: center; justify-content: center; background-image: url('https://upload.wikimedia.org/wikipedia/commons/7/7b/Density_Heatmap.png'); background-size: cover; background-position: center; border: 1px solid var(--border-color);">
+      </div>
+
+      <button class="btn-action btn-primary"
+        style="width:100%; justify-content:center; padding:12px; font-size:15px; background:var(--info-blue);"
+        onclick="acceptTaskFromModal()">
+        Accept Task Now
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal: Upload Proof -->
+  <div class="task-modal" id="uploadProofModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:20px; color:var(--text-dark);">Complete Task</h2>
+          <span style="font-size:12px; color:var(--text-muted);" id="proofTaskTitle">Task Name</span>
+        </div>
+        <button class="modal-close" onclick="closeModal('uploadProofModal')"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div style="font-size:14px; color:var(--text-dark); margin-bottom:10px;">
+        NGOs require photographic proof or a brief summary to verify completion before rewarding points.
+      </div>
+
+      <div class="upload-area" onclick="document.getElementById('taskProofImage').click()">
+        <i class="fas fa-cloud-upload-alt" style="font-size:30px; color:var(--primary-green); margin-bottom:10px;"></i>
+        <h4 style="font-size:14px;" id="proofImageLabel">Click to upload photos/documents</h4>
+        <span style="font-size:11px; color:var(--text-muted);">Max size 5MB (JPG, PNG, PDF)</span>
+      </div>
+      <input type="file" id="taskProofImage" accept="image/*" style="display:none;"
+        onchange="document.getElementById('proofImageLabel').textContent = this.files[0] ? this.files[0].name : 'Click to upload photos/documents';">
+
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Final Comments/Summary (Optional)</label>
+        <textarea class="form-control" rows="3" placeholder="Any issues encountered?"></textarea>
+      </div>
+
+      <button class="btn-action btn-primary"
+        style="width:100%; justify-content:center; padding:12px; font-size:15px; background:var(--primary-green);"
+        onclick="submitProof()">
+        Submit Proof & Mark Complete
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Firebase Integration -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="firebase.js"></script>
+
+  <script>
+    let activeProofTaskId = null;
+
+    // Tab switching logic
+    function switchTab(tabId) {
+      // Allow passing string or event dynamically
+      if (window.event && window.event.currentTarget && window.event.currentTarget.classList) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        window.event.currentTarget.classList.add('active');
+      } else {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        if (tabId === 'available') document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        if (tabId === 'assigned') document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        if (tabId === 'completed') document.querySelectorAll('.tab-btn')[2].classList.add('active');
+      }
+
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.getElementById('tab-' + tabId).classList.add('active');
+    }
+
+    // Modal Logic
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    window.acceptTask = async function (taskId) {
+      if (!auth.currentUser) return alert("You must be logged in to accept tasks.");
+      try {
+        await window.db.collection('tasks').doc(taskId).update({
+          status: 'In Progress',
+          assignedTo: auth.currentUser.uid
+        });
+        alert("Task Successfully Accepted! Moving to Assigned Tasks tab.");
+        switchTab('assigned');
+      } catch (e) { console.error(e); alert("Failed to accept task."); }
+    }
+
+    window.startAssignedTaskFromList = async function (taskId) {
+      if (!auth.currentUser) return alert("You must be logged in to start tasks.");
+      try {
+        await window.db.collection('tasks').doc(taskId).update({
+          status: 'In Progress'
+        });
+        alert("Task marked as In Progress.");
+      } catch (e) { console.error(e); alert("Failed to start task."); }
+    }
+
+    window.openProofModal = function (title, taskId) {
+      document.getElementById('proofTaskTitle').innerText = title;
+      activeProofTaskId = taskId;
+      document.getElementById('uploadProofModal').classList.add('active');
+    }
+
+        async function submitProof() {
+      if (!activeProofTaskId) return;
+
+      const photoInput = document.getElementById('taskProofImage');
+      const commentEl = document.querySelector('#uploadProofModal .form-control');
+      const submitBtn = document.querySelector('#uploadProofModal .btn-primary');
+      
+      // 1. Validation
+      if (!photoInput.files || photoInput.files.length === 0) {
+        return alert("Please select an image file first.");
+      }
+
+      const file = photoInput.files[0];
+      const comments = commentEl ? commentEl.value : "";
+
+      // 2. UI Loading State
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+      submitBtn.disabled = true;
+
+      try {
+        console.log("Starting new upload process for:", file.name);
+
+        // 3. Convert Image to Base64 (Most reliable for local dev / avoids CORS)
+        const base64Data = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = error => reject(error);
+        });
+
+        // 4. Update Database
+        const taskRef = db.collection('tasks').doc(activeProofTaskId);
+        const taskDoc = await taskRef.get();
+        const taskData = taskDoc.data();
+
+        const batch = db.batch();
+
+        // Update the task itself
+        batch.update(taskRef, {
+          status: 'Completed',
+          proofUrl: base64Data,
+          volunteerComments: comments,
+          completedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Update the source (Emergency or Request)
+        if (taskData && taskData.sourceCollection && taskData.sourceId) {
+          const sourceRef = db.collection(taskData.sourceCollection).doc(taskData.sourceId);
+          batch.update(sourceRef, {
+            status: 'Completed',
+            completedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+
+        await batch.commit();
+        console.log("Task successfully marked as completed.");
+
+        // 5. Cleanup & Success
+        alert("Success! Task completed and proof submitted.");
+        closeModal('uploadProofModal');
+        
+        // Reset form
+        photoInput.value = "";
+        if (commentEl) commentEl.value = "";
+        document.getElementById('proofImageLabel').textContent = "Click to upload photos/documents";
+        
+        // Refresh view
+        switchTab('completed');
+
+      } catch (error) {
+        console.error("Upload error:", error);
+        alert("Error: " + error.message);
+      } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }
+    }
+
+    // Firebase Auth & Data Fetching
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      try {
+        const docRef = db.collection("users").doc(user.uid);
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
+          const nameToDisplay = docSnap.data().fullName || user.email.split('@')[0];
+          document.getElementById("volNameDisplay").textContent = nameToDisplay;
+          document.getElementById("profileImage").src = `https://ui-avatars.com/api/?name=${encodeURIComponent(nameToDisplay)}&background=EFF6FF&color=1D4ED8&bold=true`;
+        } else {
+          document.getElementById("volNameDisplay").textContent = user.email.split('@')[0];
+        }
+
+        // Live Listeners for Tasks
+        // 1. Available Open Tasks
+            // Global task data store for modal
+    let _allTasksMap = {};
+
+    window.openTaskDetail = function(taskId) {
+      const task = _allTasksMap[taskId];
+      if (!task) return;
+
+      const modal = document.getElementById('taskDetailModal');
+      document.getElementById('modalTitle').innerText = task.title || 'Task Detail';
+      document.getElementById('modalBadge').innerText = task.priority + ' Priority';
+      document.getElementById('modalBadge').className = 'status-badge ' + (task.priority === 'Critical' ? 'status-pending' : 'status-active');
+      
+      const descHtml = `
+        <p><strong>Category:</strong> ${task.category || 'General'}</p>
+        <p><strong>Description:</strong> ${task.desc || task.description || 'No description provided.'}</p>
+        <p style="margin-top:10px;"><strong>Location:</strong> ${task.location || 'Not specified'}</p>
+        <p style="margin-top:10px;"><strong>Status:</strong> ${task.status}</p>
+      `;
+      document.querySelector('#taskDetailModal .modal-content div[style*="font-size:14px"]').innerHTML = descHtml;
+
+      // Update Accept button visibility
+      const acceptBtn = document.querySelector('#taskDetailModal .btn-primary');
+      if (task.status === 'Open') {
+        acceptBtn.style.display = 'block';
+        acceptBtn.onclick = () => acceptTask(taskId);
+      } else {
+        acceptBtn.style.display = 'none';
+      }
+
+      modal.classList.add('active');
+    };
+
+    window.closeModal = function(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    };
+
+    async function acceptTask(taskId) {
+      if(!auth.currentUser) return alert("Please login first.");
+      try {
+        await db.collection('tasks').doc(taskId).update({
+          status: 'In Progress',
+          assignedTo: auth.currentUser.uid,
+          assignedVolunteerName: document.getElementById('volNameDisplay').textContent
+        });
+        alert("Task Accepted!");
+        closeModal('taskDetailModal');
+        switchTab('assigned');
+      } catch(e) {
+        alert("Error accepting task.");
+      }
+    }
+
+
+                db.collection('tasks').where('status', '==', 'Open').onSnapshot(snap => {
+          const cont = document.getElementById('containerAvailable');
+          cont.innerHTML = '';
+          if (snap.empty) { cont.innerHTML = '<p style="color:var(--text-muted); grid-column:span 2;">No open tasks right now.</p>'; return; }
+          
+          snap.forEach(doc => {
+            const tk = doc.data();
+            _allTasksMap[doc.id] = {id: doc.id, ...tk};
+            cont.innerHTML += `
+                  <div class="vol-task-card" onclick="openTaskDetail('${doc.id}')" style="cursor:pointer;">
+                    <div style="display: flex; justify-content: space-between; align-items:flex-start; margin-bottom: 10px;">
+                      <span class="skill-tag" style="background:#fffbeb; color:var(--warning-orange); border:none;">${tk.category}</span>
+                    </div>
+                    <h3 style="font-size:16px; margin-bottom:5px;">${tk.title}</h3>
+                    <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px; flex-grow:1;">${tk.desc || 'No description'}</p>
+                    <div style="font-size:12px; display:flex; flex-direction:column; gap:8px; margin-bottom:15px;">
+                      <div><i class="fas fa-map-marker-alt" style="color:var(--primary-green); width:16px;"></i> ${tk.location}</div>
+                    </div>
+                    <button class="btn-action btn-primary" style="width:100%; justify-content:center; background:var(--info-blue);" onclick="acceptTask('${doc.id}')">Accept Task</button>
+                  </div>`;
+          });
+        });
+
+        // 2. Assigned / Completed tasks without composite index dependency
+        db.collection('tasks').where('assignedTo', '==', user.uid).onSnapshot(snap => {
+          const assignedCont = document.getElementById('containerAssigned');
+          const completedCont = document.getElementById('containerCompleted');
+          const allAssignedTasks = snap.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .sort((first, second) => {
+              const firstTime = first.createdAt?.toDate ? first.createdAt.toDate().getTime() : 0;
+              const secondTime = second.createdAt?.toDate ? second.createdAt.toDate().getTime() : 0;
+              return secondTime - firstTime;
+            });
+
+          const activeTasks = allAssignedTasks.filter(task => ['Assigned', 'In Progress'].includes(task.status));
+          const completedTasks = allAssignedTasks.filter(task => ['Awaiting Verification', 'Completed'].includes(task.status));
+          
+          const badge = document.getElementById('assignedBadgeCount');
+          if(badge) badge.textContent = activeTasks.length;
+
+          assignedCont.innerHTML = '';
+          if (activeTasks.length === 0) {
+            assignedCont.innerHTML = '<p style="color:var(--text-muted); grid-column:span 2;">You have no active tasks.</p>';
+          } else {
+            activeTasks.forEach(task => {
+              _allTasksMap[task.id] = task;
+              const isAssigned = task.status === 'Assigned';
+              const actionButton = isAssigned
+                ? `<button class="btn-action btn-primary" style="width:100%; justify-content:center; background:var(--info-blue);" onclick="startAssignedTaskFromList('${task.id}')"><i class="fas fa-play"></i> Start Task</button>`
+                : `<button class="btn-action btn-primary" style="width:100%; justify-content:center; background:var(--primary-green);" onclick="openProofModal('${(task.title || 'Task').replace(/'/g, "\\'")}', '${task.id}')"><i class="fas fa-camera"></i> Upload Proof & Complete</button>`;
+
+              assignedCont.innerHTML += `
+                <div class="vol-task-card" onclick="openTaskDetail('${task.id}')" style="cursor:pointer; border-top: 4px solid var(--info-blue);">
+                  <div style="display: flex; justify-content: space-between; align-items:flex-start; margin-bottom: 10px;">
+                    <span class="status-badge status-active">${isAssigned ? 'Assigned' : 'Started (In Progress)'}</span>
+                  </div>
+                  <h3 style="font-size:16px; margin-bottom:5px;">${task.title}</h3>
+                  <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px; flex-grow:1;">${task.desc || ''}</p>
+                  <div style="font-size:12px; display:flex; flex-direction:column; gap:8px; margin-bottom:15px;">
+                    <div><i class="fas fa-map-marker-alt" style="color:var(--primary-green); width:16px;"></i> ${task.location || 'Location pending'}</div>
+                    <div><i class="fas fa-fire" style="color:var(--warning-orange); width:16px;"></i> ${task.priority || 'High'} Priority</div>
+                  </div>
+                  ${actionButton}
+                </div>`;
+            });
+          }
+          completedCont.innerHTML = '';
+          if (completedTasks.length === 0) {
+            completedCont.innerHTML = '<p style="color:var(--text-muted); grid-column:span 2;">No completed task history.</p>';
+          } else {
+            completedTasks.forEach(task => {
+              const iconColor = task.status === 'Completed' ? 'var(--primary-green)' : 'var(--warning-orange)';
+              const iconCls = task.status === 'Completed' ? 'fa-check-double' : 'fa-clock';
+
+              completedCont.innerHTML += `
+                <div class="detail-row" style="align-items: center;">
+                  <div style="width:40px; height:40px; border-radius:50%; background:var(--primary-light); color:${iconColor}; display:flex; align-items:center; justify-content:center; font-size:16px;"><i class="fas ${iconCls}"></i></div>
+                  <div style="flex-grow:1;">
+                    <h4 style="font-size:15px;">${task.title}</h4>
+                    <p style="font-size:12px; color:var(--text-muted);">Status: ${task.status}  Location: ${task.location || 'Location pending'}</p>
+                  </div>
+                </div>`;
+            });
+          }
+        });
+
+      } catch (e) { }
+    });
+
+    async function logout(){
+      await auth.signOut();
+      localStorage.clear();
+      window.location.href = 'Index.html';
+    }
+  </script>
+</body>
+
+</html>
+

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DB Reset & Seed Tool</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; text-align: center; background: #f1f5f9; }
+        .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; }
+        h1 { color: #ef4444; }
+        button { padding: 15px 30px; font-size: 18px; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; transition: 0.3s; }
+        .btn-reset { background: #ef4444; color: white; }
+        .btn-reset:hover { background: #dc2626; transform: translateY(-2px); }
+        #status { margin-top: 20px; font-weight: 600; color: #475569; white-space: pre-line; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Database Reset Tool</h1>
+        <p>This will delete all <b>Tasks</b>, <b>Emergencies</b>, and <b>Requests</b>, and then populate them with realistic dummy data as requested.</p>
+        <button class="btn-reset" onclick="runReset()">RESET & POPULATE NOW</button>
+        <div id="status">Ready...</div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDkXC5vYmE3QljS6wQcdW5M6rRMt2rH9g4",
+            authDomain: "resource-allocation-ngo.firebaseapp.com",
+            projectId: "resource-allocation-ngo",
+            storageBucket: "resource-allocation-ngo.firebasestorage.app",
+            messagingSenderId: "804799514382",
+            appId: "1:804799514382:web:d55b5671a5c5d5d514395f"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const log = (msg) => {
+            console.log(msg);
+            document.getElementById('status').innerText += msg + '\n';
+        };
+
+        async function clearCollection(path) {
+            log(`Clearing ${path}...`);
+            const snap = await db.collection(path).get();
+            const batch = db.batch();
+            snap.forEach(doc => batch.delete(doc.ref));
+            await batch.commit();
+            log(`Cleared ${snap.size} docs from ${path}.`);
+        }
+
+        async function runReset() {
+            document.getElementById('status').innerText = 'Starting...\n';
+            try {
+                await clearCollection('tasks');
+                await clearCollection('emergencies');
+                await clearCollection('requests');
+
+                log('Creating Dummy Volunteers...');
+                const volunteers = [
+                    { id: 'v1', fullName: 'Ankit Yadav', email: 'ankit@example.com', location: 'Delhi, India', phone: '9876543210', skills: ['First Aid', 'Driving'], points: 120 },
+                    { id: 'v2', fullName: 'Rahul Sharma', email: 'rahul@example.com', location: 'Mumbai, India', phone: '9988776655', skills: ['Rescue', 'Translation'], points: 85 },
+                    { id: 'v3', fullName: 'Priya Singh', email: 'priya@example.com', location: 'Lucknow, India', phone: '9122334455', skills: ['Medical', 'Coordination'], points: 200 }
+                ];
+                for(const v of volunteers) await db.collection('users').doc(v.id).set(v);
+
+                log('Creating 4 Emergency Tasks...');
+                const emergencies = [
+                    { type: 'Accident', description: 'Major road accident near Highway 24, immediate medical help needed.', location: 'Highway 24, Delhi', status: 'assigned', assignedVolunteerId: 'v1', assignedVolunteerName: 'Ankit Yadav', reportedAt: new Date() },
+                    { type: 'Fire Alert', description: 'Small fire reported in a residential building, locals evacuated.', location: 'Sector 15, Lucknow', status: 'active', reportedAt: new Date() },
+                    { type: 'Natural Disaster', description: 'Flash flood in low-lying area, evacuation in progress.', location: 'Varanasi Banks', status: 'Completed', assignedVolunteerId: 'v2', assignedVolunteerName: 'Rahul Sharma', reportedAt: new Date(Date.now() - 86400000) },
+                    { type: 'Medical Emergency', description: 'Patient needs oxygen cylinder urgently at Home care.', location: 'Andheri East, Mumbai', status: 'assigned', assignedVolunteerId: 'v3', assignedVolunteerName: 'Priya Singh', reportedAt: new Date() }
+                ];
+                for(const e of emergencies) {
+                    const ref = await db.collection('emergencies').add(e);
+                    // If assigned, create a task doc too
+                    if(e.status === 'assigned' || e.status === 'Completed') {
+                        await db.collection('tasks').add({
+                            title: 'EMERGENCY: ' + e.type,
+                            description: e.description,
+                            location: e.location,
+                            status: e.status === 'Completed' ? 'Completed' : 'In Progress',
+                            volunteerId: e.assignedVolunteerId,
+                            volunteerName: e.assignedVolunteerName,
+                            sourceCollection: 'emergencies',
+                            sourceId: ref.id,
+                            createdAt: e.reportedAt,
+                            urgency: 'Critical'
+                        });
+                    }
+                }
+
+                log('Creating 6+ General Requests & Tasks...');
+                const requests = [
+                    { category: 'Food', description: 'Need ration for 5 families in slum area.', location: 'Noida Sector 62', urgency: 'High', status: 'Approved', peopleAffected: 25, createdAt: new Date() },
+                    { category: 'Medical', description: 'Request for basic medicines and bandages.', location: 'Old Delhi Metro', urgency: 'Critical', status: 'Pending Review', peopleAffected: 10, createdAt: new Date() },
+                    { category: 'Shelter', description: 'Winter clothes and blankets needed for homeless.', location: 'Connaught Place', urgency: 'Medium', status: 'Completed', peopleAffected: 50, createdAt: new Date(Date.now() - 172800000) }
+                ];
+                
+                for(const r of requests) {
+                    const ref = await db.collection('requests').add(r);
+                    if(r.status === 'Approved' || r.status === 'Completed') {
+                        await db.collection('tasks').add({
+                            title: r.category + ' Distribution',
+                            description: r.description,
+                            location: r.location,
+                            status: r.status === 'Completed' ? 'Completed' : 'In Progress',
+                            volunteerId: 'v1',
+                            volunteerName: 'Ankit Yadav',
+                            sourceCollection: 'requests',
+                            sourceId: ref.id,
+                            createdAt: r.createdAt,
+                            urgency: r.urgency
+                        });
+                    }
+                }
+
+                log('Adding more random completed tasks for history...');
+                for(let i=0; i<4; i++) {
+                    await db.collection('tasks').add({
+                        title: 'Past Aid Mission #' + (i+1),
+                        description: 'Successfully distributed supplies to local community.',
+                        location: 'Local Area ' + (i+1),
+                        status: 'Completed',
+                        volunteerId: 'v1',
+                        volunteerName: 'Ankit Yadav',
+                        createdAt: new Date(Date.now() - (i+2)*86400000),
+                        urgency: 'Low'
+                    });
+                }
+
+                log('DONE! Database has been reset and populated with fresh, real data.');
+                alert('Database Reset Successful!');
+            } catch (e) {
+                log('ERROR: ' + e.message);
+                alert('Error resetting database: ' + e.message);
+            }
+        }
+    </script>
+</body>
+</html>

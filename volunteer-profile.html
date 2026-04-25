@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile - NGOHubX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <style>
+     .profile-header-card {
+         background: linear-gradient(135deg, var(--primary-dark) 0%, #1e3a8a 100%);
+         border-radius: var(--radius-lg);
+         padding: 40px;
+         color: white;
+         display: flex;
+         align-items: center;
+         gap: 30px;
+         margin-bottom: 30px;
+         box-shadow: var(--shadow-md);
+     }
+
+     .profile-lg-img {
+         width: 120px;
+         height: 120px;
+         border-radius: 50%;
+         object-fit: cover;
+         border: 5px solid rgba(255,255,255,0.2);
+         cursor: pointer;
+         transition: 0.3s;
+     }
+     .profile-lg-img:hover { border-color: rgba(255,255,255,0.5); transform: scale(1.05); }
+
+     .dp-upload-wrapper {
+         position: relative;
+         display: inline-block;
+     }
+     .dp-upload-wrapper .dp-overlay {
+         position: absolute;
+         bottom: 5px;
+         right: 5px;
+         width: 35px;
+         height: 35px;
+         background: var(--primary-dark);
+         border: 3px solid white;
+         border-radius: 50%;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         cursor: pointer;
+         transition: 0.2s;
+         color: white;
+         font-size: 14px;
+     }
+     .dp-upload-wrapper .dp-overlay:hover { background: #1e3a8a; transform: scale(1.1); }
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar for Volunteer -->
+  <aside class="sidebar">
+    <div class="sidebar-header" onclick="window.location.href='Index.html'" style="cursor: pointer;">
+      <img src="logoNGO.jpeg" style="height: 35px; width: auto; border-radius: 6px; object-fit: contain;" alt="Logo">
+      <span>NGOHubX</span>
+    </div>
+    
+    <div class="sidebar-menu">
+      <a href="volunteer-dashboard.html" class="menu-item">
+        <i class="fas fa-th-large"></i> Dashboard
+      </a>
+      <a href="volunteer-tasks.html" class="menu-item">
+        <i class="fas fa-search-location"></i> Find Tasks
+      </a>
+      <a href="volunteer-tasks.html" class="menu-item">
+        <i class="fas fa-clipboard-list"></i> My Tasks
+      </a>
+      <a href="volunteer-leaderboard.html" class="menu-item">
+        <i class="fas fa-trophy"></i> Leaderboard
+      </a>
+      <a href="volunteer-profile.html" class="menu-item active">
+        <i class="fas fa-user-circle"></i> My Profile
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="topbar">
+      <div class="welcome-text">
+        <h1>My Profile</h1>
+        <span>Manage your personal information, skills, and account settings.</span>
+      </div>
+      <div class="topbar-actions">
+        <div class="user-profile">
+          <div class="user-info" style="text-align: right;">
+            <span class="user-name" id="topbarName">Loading...</span>
+            <span class="user-role">Volunteer</span>
+          </div>
+          <img src="https://ui-avatars.com/api/?name=V&background=EFF6FF&color=1D4ED8" id="topbarImg" alt="Profile">
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      
+      <div class="profile-header-card">
+          <div class="dp-upload-wrapper">
+            <img src="" id="profileHeroImg" class="profile-lg-img" onclick="document.getElementById('dpUpload').click()">
+            <div class="dp-overlay" onclick="document.getElementById('dpUpload').click()">
+              <i class="fas fa-camera"></i>
+            </div>
+            <input type="file" id="dpUpload" accept="image/*" style="display:none;" onchange="handleDPUpload(event)">
+          </div>
+          <div>
+              <h2 style="font-size: 28px; margin-bottom: 5px;" id="heroName">Loading...</h2>
+              <p style="font-size: 15px; opacity: 0.9; margin-bottom: 10px;">Registered Volunteer • Joined <span id="heroDate">...</span></p>
+              <div style="display: flex; gap: 10px;">
+                  <span class="status-badge" style="background:var(--primary-green); color:white; border:none;"><i class="fas fa-check-circle"></i> Identity Verified</span>
+                  <span class="status-badge" style="background:rgba(0,0,0,0.2); color:white; border:none;">UID: <span id="heroUid">...</span></span>
+              </div>
+          </div>
+      </div>
+
+      <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr;">
+          <!-- Edit Form -->
+          <div class="form-panel" style="margin:0;">
+              <h2 class="panel-title" style="margin-bottom: 20px;">Personal Details</h2>
+              <form id="profileForm">
+                  <div class="form-grid">
+                      <div class="form-group">
+                          <label>Full Name</label>
+                          <input type="text" id="p_name" class="form-control" required>
+                      </div>
+                      <div class="form-group">
+                          <label>Email Address</label>
+                          <input type="email" id="p_email" class="form-control" disabled style="background:#f1f5f9;">
+                      </div>
+                      <div class="form-group">
+                          <label>Contact Number</label>
+                          <input type="text" id="p_phone" class="form-control" placeholder="+91 XXXXXXXXXX">
+                      </div>
+                      <div class="form-group">
+                          <label>Primary Location</label>
+                          <input type="text" id="p_location" class="form-control" placeholder="City, State">
+                      </div>
+                  </div>
+
+                  <h2 class="panel-title" style="margin-top: 30px; margin-bottom: 20px;">Skills & Availability</h2>
+                  
+                  <div class="form-group">
+                      <label>Core Skills (Used for AI Task Matching)</label>
+                      <input type="text" id="p_skills" class="form-control" placeholder="e.g. Medical Aid, Driving, Teaching, Logistics">
+                  </div>
+                  
+                  <div class="form-group">
+                      <label>Typical Availability</label>
+                      <select id="p_availability" class="form-control">
+                          <option value="Weekend">Weekends Only</option>
+                          <option value="Evenings">Weekday Evenings</option>
+                          <option value="Flexible">Flexible / Anytime</option>
+                          <option value="Emergency">Emergencies Only</option>
+                      </select>
+                  </div>
+
+                  <hr style="border:none; border-top:1px solid var(--border-color); margin: 30px 0;">
+
+                  <button type="submit" id="saveBtn" class="btn-action btn-primary" style="padding: 12px 25px; font-size: 15px;"><i class="fas fa-save"></i> Save Profile Changes</button>
+                  <p id="saveMsg" style="margin-top:10px; font-size:13px; font-weight:600;"></p>
+              </form>
+          </div>
+
+          <!-- Achievements/Settings -->
+          <div>
+              <div class="panel" style="margin-bottom: 25px;">
+                  <h2 class="panel-title">Privacy Settings</h2>
+                  <div style="font-size:13px; color:var(--text-dark); margin-bottom:15px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <span>Show my profile on Leaderboard</span>
+                        <input type="checkbox" checked>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <span>Receive SMS for Urgent Tasks</span>
+                        <input type="checkbox" checked>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>Share live location while active</span>
+                        <input type="checkbox" checked>
+                    </div>
+                  </div>
+              </div>
+
+              <div class="panel">
+                  <h2 class="panel-title" style="color:var(--emergency-red);"><i class="fas fa-exclamation-triangle"></i> Danger Zone</h2>
+                  <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Once you delete your account, there is no going back. Please be certain.</p>
+                  <button class="btn-action" style="width:100%; justify-content:center; border:1px solid var(--emergency-red); color:var(--emergency-red); background:transparent;" onclick="alert('Operation blocked in demo mode.')">Delete Account</button>
+              </div>
+          </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Firebase Integration -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="firebase.js"></script>
+
+  <script>
+    let currentUserUid = null;
+
+    function formatCreatedAt(value) {
+        if (!value) return 'Recently';
+        if (typeof value.toDate === 'function') return value.toDate().toLocaleDateString();
+        const parsed = new Date(value);
+        return Number.isNaN(parsed.getTime()) ? 'Recently' : parsed.toLocaleDateString();
+    }
+
+    function setProfileImage(url) {
+        document.getElementById("profileHeroImg").src = url;
+        document.getElementById("topbarImg").src = url;
+    }
+
+    function handleDPUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        if (file.size > 5 * 1024 * 1024) {
+            alert("File too large! Max 5MB allowed.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            const base64 = e.target.result;
+            setProfileImage(base64);
+            
+            // Save base64 to Firestore (for demo/small images)
+            try {
+                await db.collection("users").doc(currentUserUid).set({ profileImage: base64 }, { merge: true });
+                alert("Profile picture updated successfully!");
+            } catch(err) {
+                console.error(err);
+                alert("Error saving image: " + err.message);
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      
+      currentUserUid = user.uid;
+      
+      try {
+        const docRef = db.collection("users").doc(user.uid);
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
+            const data = docSnap.data();
+            
+            // Populate Hero
+            const nameToDisplay = data.fullName || user.email.split('@')[0];
+            document.getElementById("heroName").textContent = nameToDisplay;
+            document.getElementById("topbarName").textContent = nameToDisplay;
+            document.getElementById("heroUid").textContent = user.uid.substr(0,8).toUpperCase();
+            document.getElementById("heroDate").textContent = formatCreatedAt(data.createdAt);
+            
+            // Profile image
+            if (data.profileImage) {
+                setProfileImage(data.profileImage);
+            } else {
+                setProfileImage(`https://ui-avatars.com/api/?name=${encodeURIComponent(nameToDisplay)}&background=EFF6FF&color=1D4ED8&bold=true`);
+            }
+            document.getElementById("topbarImg").src = data.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(nameToDisplay)}&background=EFF6FF&color=1D4ED8&bold=true`;
+
+            // Populate Form
+            document.getElementById("p_name").value = data.fullName || "";
+            document.getElementById("p_email").value = data.email || user.email;
+            document.getElementById("p_phone").value = data.phone || "";
+            document.getElementById("p_location").value = data.location || "";
+            document.getElementById("p_skills").value = Array.isArray(data.skills) ? data.skills.join(', ') : (data.skills || "");
+            if(data.availability) {
+                document.getElementById("p_availability").value = data.availability;
+            }
+        }
+      } catch(e) {
+          console.error(e);
+      }
+    });
+
+    document.getElementById("profileForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("saveBtn");
+        const msg = document.getElementById("saveMsg");
+        
+        btn.textContent = "Saving...";
+        btn.disabled = true;
+
+        const payload = {
+            fullName: document.getElementById("p_name").value,
+            phone: document.getElementById("p_phone").value,
+            location: document.getElementById("p_location").value,
+            skills: document.getElementById("p_skills").value.split(',').map(skill => skill.trim()).filter(Boolean),
+            availability: document.getElementById("p_availability").value
+        };
+
+        try {
+            await db.collection("users").doc(currentUserUid).set(payload, { merge: true });
+            msg.textContent = "Profile updated successfully!";
+            msg.style.color = "var(--primary-green)";
+            
+            // Update hero
+            document.getElementById("heroName").textContent = payload.fullName;
+            document.getElementById("topbarName").textContent = payload.fullName;
+        } catch(error) {
+            msg.textContent = "Error saving profile: " + error.message;
+            msg.style.color = "var(--emergency-red)";
+        } finally {
+            btn.innerHTML = `<i class="fas fa-save"></i> Save Profile Changes`;
+            btn.disabled = false;
+            setTimeout(() => msg.textContent = "", 3000);
+        }
+    });
+
+    async function logout(){
+      await auth.signOut();
+      localStorage.clear();
+      window.location.href = 'Index.html';
+    }
+  </script>
+</body>
+</html>
+
+

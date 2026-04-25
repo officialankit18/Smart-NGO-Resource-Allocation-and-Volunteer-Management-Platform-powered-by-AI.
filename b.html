@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About NGOHubX - Unified NGO Ecosystem</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="index.css">
+
+  <style>
+    body {
+      font-family: "Inter", sans-serif;
+    }
+
+    /* HERO */
+    .about-hero {
+      position: relative;
+      min-height: 95vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 130px 0 90px;
+      overflow: hidden;
+      background: #0f172a;
+    }
+
+    /* YOUTUBE FULL WIDTH BACKGROUND */
+    .youtube-bg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100vw;
+      height: 56.25vw; /* 16:9 ratio based on width */
+      min-height: 100%;
+      min-width: 177.78vh; /* 16:9 ratio based on height */
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .youtube-bg iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      filter: brightness(0.4);
+    }
+
+    .about-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.50), rgba(15, 23, 42, 0.80));
+      z-index: 2;
+    }
+
+    .about-hero-content {
+      position: relative;
+      z-index: 3;
+      text-align: center;
+      color: white;
+      max-width: 950px;
+      padding: 0 18px;
+    }
+
+    .about-hero-content h1 {
+      font-size: 50px;
+      font-weight: 900;
+      margin-bottom: 15px;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .about-hero-content h1 span {
+      color: var(--emergency-red);
+    }
+
+    .about-hero-content p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .about-hero-buttons {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .about-btn {
+      text-decoration: none;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      transition: 0.3s;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      color: white;
+      background: transparent;
+    }
+
+    .about-btn:hover {
+      background: white;
+      color: #0f172a;
+    }
+
+    .about-btn.red {
+      background: var(--emergency-red);
+      border: 2px solid var(--emergency-red);
+    }
+
+    .about-btn.red:hover {
+      background: #b91c1c;
+      border-color: #b91c1c;
+      color: white;
+    }
+
+    /* SECTION */
+    .section {
+      padding: 80px 0;
+    }
+
+    .section.light {
+      background: var(--bg-light);
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      max-width: 900px;
+      margin: auto;
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 50px;
+    }
+
+    /* GRID CARDS */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+    }
+
+    .card-box {
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      transition: 0.3s ease;
+    }
+
+    .card-box:hover {
+      transform: translateY(-10px);
+      box-shadow: 0px 18px 40px rgba(0, 0, 0, 0.18);
+    }
+
+    .card-box i {
+      font-size: 42px;
+      color: var(--emergency-red);
+      margin-bottom: 15px;
+    }
+
+    .card-box h3 {
+      font-size: 20px;
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .card-box p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* MISSION VISION */
+    .vision-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 40px;
+      align-items: center;
+    }
+
+    .vision-text h2 {
+      font-size: 26px;
+      color: var(--primary-dark);
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .vision-text p {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .vision-grid img {
+      width: 100%;
+      border-radius: 18px;
+      box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    /* IMPACT */
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .impact-box {
+      text-align: center;
+      background: white;
+      padding: 28px;
+      border-radius: 18px;
+      box-shadow: 0px 12px 28px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .impact-box h2 {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--emergency-red);
+      margin-bottom: 6px;
+    }
+
+    .impact-box p {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    /* CTA */
+    .cta-section {
+      text-align: center;
+      padding: 90px 20px;
+      background: linear-gradient(135deg, #dc2626, #7f1d1d);
+      color: white;
+    }
+
+    .cta-section h2 {
+      font-size: 38px;
+      font-weight: 900;
+      margin-bottom: 15px;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .cta-section p {
+      max-width: 850px;
+      margin: auto;
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .cta-btn {
+      text-decoration: none;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 800;
+      transition: 0.3s;
+      border: 2px solid white;
+      color: white;
+    }
+
+    .cta-btn:hover {
+      background: white;
+      color: #7f1d1d;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #0f172a;
+      padding: 25px;
+      text-align: center;
+      color: white;
+      font-size: 13px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .vision-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .impact-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .about-hero-content h1 {
+        font-size: 36px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .impact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .about-hero-content h1 {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="main-header">
+    <div class="container">
+
+      <div class="logo">
+        <img src="logoNGO.jpeg" alt="Smart Resource Logo" class="logo-img"
+          style="height: 60px; width: auto; border-radius: 8px; object-fit: contain;">
+      </div>
+
+      <nav class="main-nav">
+        <ul>
+          <li><a href="Index.html">Home</a></li>
+          <li><a href="about.html" class="active">About NGOHubX</a></li>
+          <li><a href="Index.html#work">How It Works</a></li>
+          <li><a href="Index.html#campaigns">Live Campaigns</a></li>
+          <li><a href="#" onclick="openAuthModal(); return false;">Portals / Login</a></li>
+          <li><a href="Index.html#contact">Contact Us</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn-emergency" onclick="openEmergencyModal()">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Emergency</span>
+        </button>
+
+        <button onclick="openAuthModal()" class="btn-login"
+          style="background:transparent; border:none; color:var(--text-dark); font-weight:600; cursor:pointer;">
+          Login
+        </button>
+
+        <a href="Index.html#get-involved" class="btn-support">Join Now</a>
+
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+      <div class="logo">
+        <img src="logoNGO.jpeg" alt="Smart Resource Logo" class="logo-img">
+      </div>
+      <button class="close-btn" onclick="toggleMobileMenu()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <nav class="mobile-nav">
+      <a href="Index.html">Home</a>
+      <a href="about.html">About Us</a>
+      <a href="Index.html#work">How It Works</a>
+      <a href="Index.html#campaigns">Campaigns</a>
+      <a href="Index.html#get-involved">Get Involved</a>
+      <a href="Index.html#contact">Contact</a>
+      <a href="#" onclick="toggleMobileMenu(); openAuthModal(); return false;">Login</a>
+      <a href="Index.html#get-involved" onclick="toggleMobileMenu();">Join Now</a>
+
+      <button class="btn-emergency-mobile" onclick="openEmergencyModal()">
+        <i class="fas fa-exclamation-triangle"></i> Report Emergency
+      </button>
+    </nav>
+  </div>
+
+
+  <!-- HERO WITH YOUTUBE FULL WIDTH BACKGROUND VIDEO -->
+  <section class="about-hero">
+
+    <!-- YouTube Full Width Background -->
+    <div class="youtube-bg">
+      <iframe
+        src="https://www.youtube.com/embed/jqyXc15ljHY?autoplay=1&mute=1&loop=1&playlist=jqyXc15ljHY&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1"
+        title="NGOHubX Background Video"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <!-- Dark Overlay for text visibility -->
+    <div class="about-overlay"></div>
+
+    <!-- Hero Text Content -->
+    <div class="about-hero-content">
+      <h1>About <span>NGOHubX</span></h1>
+      <p>
+        NGOHubX is a smart emergency and community support platform designed to connect
+        citizens, NGOs, and volunteers in one unified ecosystem. Our goal is to reduce response time,
+        digitize scattered community needs, and ensure help reaches the right place faster.
+      </p>
+
+      <div class="about-hero-buttons">
+        <a href="Index.html#get-involved" class="about-btn red">
+          <i class="fas fa-hand-holding-heart"></i> Join Now
+        </a>
+        <a href="Index.html#work" class="about-btn">
+          <i class="fas fa-diagram-project"></i> Explore Workflow
+        </a>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- MISSION + VISION -->
+  <section class="section light">
+    <div class="container">
+      <h2 class="section-title">Our Mission & Vision</h2>
+      <p class="section-subtitle">
+        We aim to create a national-level network where NGOs, citizens, and volunteers collaborate in real-time,
+        making emergency support faster, transparent, and efficient.
+      </p>
+
+      <div class="vision-grid">
+        <div class="vision-text">
+          <h2><i class="fas fa-bullseye" style="color:var(--emergency-red);"></i> Our Mission</h2>
+          <p>
+            To digitize fragmented community reports and convert them into verified actionable tasks.
+            NGOHubX ensures emergency response is faster by improving transparency, tracking, and coordination.
+          </p>
+
+          <h2 style="margin-top:18px;"><i class="fas fa-eye" style="color:var(--emergency-red);"></i> Our Vision</h2>
+          <p>
+            To build India's largest unified NGO ecosystem where every citizen can report a need, every NGO can
+            manage resources efficiently, and every volunteer can contribute effectively through smart technology.
+          </p>
+        </div>
+
+        <img src="https://www.narayanseva.org/wp-content/uploads/2025/05/24083844/NGO-Volunteering-blog_english.jpg"
+          alt="NGO Support Image">
+      </div>
+    </div>
+  </section>
+
+
+  <!-- WHAT PROBLEM WE SOLVE -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">What Problem We Solve</h2>
+      <p class="section-subtitle">
+        NGOs collect critical community data using paper surveys, WhatsApp messages, and manual documentation.
+        This causes delays in identifying urgent needs and coordinating volunteers. NGOHubX solves this by
+        converting scattered data into structured verified workflows.
+      </p>
+
+      <div class="cards-grid">
+        <div class="card-box">
+          <i class="fa-solid fa-folder-open"></i>
+          <h3>Centralized Data</h3>
+          <p>All emergencies and community needs are stored in one structured database for easy access and tracking.</p>
+        </div>
+
+        <div class="card-box">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <h3>Urgency Prioritization</h3>
+          <p>Priority scoring helps NGOs quickly identify critical emergencies and allocate resources effectively.</p>
+        </div>
+
+        <div class="card-box">
+          <i class="fa-solid fa-people-arrows"></i>
+          <h3>Smart Coordination</h3>
+          <p>Volunteers are matched based on skills, availability, and proximity to the emergency location.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ROLE BASED FEATURES -->
+  <section class="section light">
+    <div class="container">
+      <h2 class="section-title">How NGOHubX Works</h2>
+      <p class="section-subtitle">
+        NGOHubX provides dedicated portals for three users. Each portal has a structured workflow for reporting,
+        verification, volunteer assignment, and completion tracking.
+      </p>
+
+      <div class="cards-grid">
+        <div class="card-box">
+          <i class="fa-solid fa-bullhorn"></i>
+          <h3>Citizen Portal</h3>
+          <p>
+            Citizens report emergencies by selecting need type, urgency, location, and uploading proof.
+            They can track their request status live.
+          </p>
+        </div>
+
+        <div class="card-box">
+          <i class="fa-solid fa-handshake-angle"></i>
+          <h3>Volunteer Portal</h3>
+          <p>
+            Volunteers register with skills and availability. They receive tasks, accept assignments,
+            and upload proof after completion.
+          </p>
+        </div>
+
+        <div class="card-box">
+          <i class="fa-solid fa-building-columns"></i>
+          <h3>NGO Admin Portal</h3>
+          <p>
+            NGOs verify reports, create tasks, assign volunteers, and monitor progress using dashboards
+            and analytics.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- IMPACT -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Our Impact Vision</h2>
+      <p class="section-subtitle">
+        NGOHubX is designed to reduce response time, improve transparency, and ensure resources reach the right place
+        at the right time.
+      </p>
+
+      <div class="impact-grid">
+        <div class="impact-box">
+          <h2>50%</h2>
+          <p>Faster Response Time</p>
+        </div>
+
+        <div class="impact-box">
+          <h2>3X</h2>
+          <p>Better Volunteer Allocation</p>
+        </div>
+
+        <div class="impact-box">
+          <h2>100%</h2>
+          <p>Transparent Task Tracking</p>
+        </div>
+
+        <div class="impact-box">
+          <h2>5+</h2>
+          <p>SDGs Supported</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2>Join the NGOHubX Ecosystem</h2>
+    <p>
+      Whether you are a citizen reporting a need, a volunteer ready to serve, or an NGO managing operations,
+      NGOHubX provides the tools to coordinate faster and create measurable social impact.
+    </p>
+
+    <div class="cta-buttons">
+      <a href="login.html#get-involved" class="cta-btn">Report a Need</a>
+      <a href="login.html#get-involved" class="cta-btn">Become a Volunteer</a>
+      <a href="login.html#ngo-login" class="cta-btn">NGO Login</a>
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer>
+    <p><b>NGOHubX</b> - Smart Resource Allocation Platform</p>
+    <p>Email: support@ngohubx.org | Phone: +91-6532757869</p>
+    <p>Copyright 2026 NGOHubX. All rights reserved.</p>
+  </footer>
+
+
+  <!-- SCRIPT -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="firebase.js"></script>
+  <script src="index.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Public Dashboard - NGOHubX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <style>
+    /* Citizen Dashboard Specific Styles */
+    body { background-color: #f9fafb; font-family: 'Inter', sans-serif; }
+    
+    .citizen-navbar {
+      background: white;
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand { font-size: 20px; font-weight: 700; color: var(--primary-dark); display: flex; align-items:center; gap:10px;}
+    
+    .citizen-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+
+    /* Profile Module */
+    .c-profile-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 30px;
+      border: 1px solid var(--border-color);
+    }
+    .c-profile-info { display: flex; align-items: center; gap: 20px; }
+    .c-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #e5e7eb; }
+    
+    /* Report Button Highlight */
+    .btn-report-huge {
+      background: var(--emergency-red);
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 15px 30px;
+      border-radius: 30px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-report-huge:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4); }
+
+    /* Layout Grid */
+    .c-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+    
+    /* Report Cards */
+    .c-filters { display: flex; gap: 10px; margin-bottom: 20px; }
+    .btn-filter { background: white; border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: 0.2s; font-size: 13px; font-weight: 600; color: var(--text-dark); }
+    .btn-filter.active { background: var(--primary-dark); color: white; border-color: var(--primary-dark); }
+
+    .c-report-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 15px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      transition: 0.2s;
+    }
+    .c-report-card:hover { border-color: var(--primary-green); box-shadow: var(--shadow-sm); }
+    
+    .c-status { padding: 4px 12px; border-radius: 15px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
+    .status-pending { background: #fef2f2; color: #ef4444; } /* Red */
+    .status-inprogress { background: #fef3c7; color: #d97706; } /* Yellow */
+    .status-resolved { background: #f0fdf4; color: #10b981; } /* Green */
+
+    .c-timeline {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 25px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .timeline-node {
+      display: flex; gap: 15px; margin-bottom: 20px; position:relative;
+    }
+    .timeline-node:last-child { margin-bottom: 0; }
+    .t-icon { width: 30px; height: 30px; border-radius: 50%; background: #e5e7eb; display:flex; align-items:center; justify-content:center; font-size:12px; z-index:2;}
+    .t-content { flex-grow: 1; padding-bottom: 20px; border-bottom: 1px solid #f3f4f6;}
+    .timeline-node:last-child .t-content { border: none; padding-bottom: 0; }
+
+    /* Modal */
+    .c-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center; }
+    .c-modal.active { display:flex; animation: fadeIn 0.3s; }
+    .c-modal-content { background:white; padding:30px; border-radius:var(--radius-lg); width:90%; max-width:500px; }
+  </style>
+</head>
+
+<body>
+  <!-- Simplified Navbar -->
+  <nav class="citizen-navbar">
+    <div class="brand" onclick="window.location.href='Index.html'" style="cursor: pointer;">
+      <img src="logoNGO.jpeg" style="height: 35px; width: auto; border-radius: 6px; object-fit: contain;" alt="Logo"> NGOHubX
+    </div>
+    
+    <div style="display:flex; align-items:center; gap:20px;">
+      <a href="#" style="color:var(--text-dark); text-decoration:none; font-weight:500;">Help Center</a>
+      <button onclick="logout()" style="background:var(--emergency-red); color:white; border:none; padding:8px 16px; border-radius:var(--radius-md); font-weight:600; cursor:pointer;">
+        Logout
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="citizen-container">
+    
+    <!-- Profile Card Header -->
+    <div class="c-profile-card">
+      <div class="c-profile-info">
+        <img src="https://ui-avatars.com/api/?name=Citizen&background=f3f4f6&color=111827" id="profileImage" class="c-avatar">
+        <div>
+          <h1 id="citNameDisplay" style="font-size: 24px; color: var(--text-dark); margin-bottom: 8px;">Loading User...</h1>
+          <div style="color: var(--text-muted); font-size: 14px; display: flex; gap: 15px;">
+            <span><i class="fas fa-phone-alt"></i> +91 XXXXX XXXXX</span>
+            <span><i class="fas fa-map-marker-alt"></i> City Sector 4</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
+        <button class="btn-action btn-report-huge" onclick="window.location.href='report-issue.html'">
+          <i class="fas fa-bullhorn"></i> Report New Issue
+        </button>
+        <button class="btn-filter" onclick="alert('Profile edit modal loading...')">Edit Profile</button>
+      </div>
+    </div>
+
+    <!-- Data Layout -->
+    <div class="c-grid">
+      
+      <!-- Left Column: Reports List -->
+      <div>
+        <h2 style="font-size: 18px; margin-bottom: 15px; color: var(--text-dark);">My Submitted Reports</h2>
+        
+        <div class="c-filters">
+          <button class="btn-filter active">All Reports</button>
+          <button class="btn-filter">Active Issues</button>
+          <button class="btn-filter">Resolved</button>
+        </div>
+
+        <div id="reportsList">
+          <!-- Pending Report (Red) -->
+          <div class="c-report-card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+              <span class="skill-tag" style="background:#eff6ff; color:#3b82f6; border:none; margin:0;"><i class="fas fa-home"></i> Shelter Need</span>
+              <span class="c-status status-pending">Pending Review</span>
+            </div>
+            <h3 style="font-size:16px; margin-bottom:8px; color:var(--text-dark);">Fallen Tree on Powerlines</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">A massive tree collapsed near the sector 4 community hall, crushing the temporary shelter tents.</p>
+            <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted);">
+              <span><i class="fas fa-users"></i> ~10 People Affected</span>
+              <span><i class="far fa-calendar-alt"></i> Submitted: Today, 9:00 AM</span>
+            </div>
+          </div>
+
+          <!-- In Progress Report (Yellow) -->
+          <div class="c-report-card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+              <span class="skill-tag" style="background:#fffbeb; color:#d97706; border:none; margin:0;"><i class="fas fa-hamburger"></i> Food Shortage</span>
+              <span class="c-status status-inprogress">In Progress</span>
+            </div>
+            <h3 style="font-size:16px; margin-bottom:8px;">Urgent Rations Needed</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">Due to heavy flooding, the southern district is cut off and running low on clean water and food.</p>
+            <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted);">
+              <span><i class="fas fa-users"></i> ~50 People Affected</span>
+              <span><i class="far fa-calendar-alt"></i> Submitted: Yesterday</span>
+            </div>
+          </div>
+
+          <!-- Resolved Report (Green) -->
+          <div class="c-report-card" style="opacity:0.8;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+              <span class="skill-tag" style="background:#fef2f2; color:#ef4444; border:none; margin:0;"><i class="fas fa-medkit"></i> Medical</span>
+              <span class="c-status status-resolved">Resolved</span>
+            </div>
+            <h3 style="font-size:16px; margin-bottom:8px;">Clinic Supply Shortage</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">Local clinic exhausted bandages and basic painkillers.</p>
+            <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted);">
+              <span><i class="fas fa-users"></i> ~20 People Affected</span>
+              <span><i class="far fa-calendar-alt"></i> Closed: Oct 18, 2026</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Live Timeline Tracking -->
+      <div>
+        <h2 style="font-size: 18px; margin-bottom: 15px; color: var(--text-dark);">Live Tracking</h2>
+        
+        <div class="c-timeline">
+          <p style="font-size:13px; font-weight:600; margin-bottom:20px; color:var(--primary-green);">Tracking: Urgent Rations Needed</p>
+          
+          <div class="timeline-node">
+            <div class="t-icon" style="background:#fef3c7; color:#d97706;"><i class="fas fa-truck"></i></div>
+            <div class="t-content">
+              <div style="font-size:14px; font-weight:600;">Volunteer Dispatched!</div>
+              <div style="font-size:12px; color:var(--text-muted);">Rahul Sharma is on the way with supplies. Estimated arrival: 30 minutes.</div>
+              <div style="font-size:11px; color:#d97706; margin-top:5px;">2 hours ago</div>
+            </div>
+          </div>
+
+          <div class="timeline-node">
+            <div class="t-icon" style="background:#eff6ff; color:#3b82f6;"><i class="fas fa-building"></i></div>
+            <div class="t-content">
+              <div style="font-size:14px; font-weight:600;">NGO Assigned (Hope Foundation)</div>
+              <div style="font-size:12px; color:var(--text-muted);">Your issue was picked up by a local NGO. Resources are being gathered.</div>
+              <div style="font-size:11px; color:#3b82f6; margin-top:5px;">Yesterday, 4:00 PM</div>
+            </div>
+          </div>
+
+          <div class="timeline-node">
+            <div class="t-icon" style="background:#e5e7eb; color:#6b7280;"><i class="fas fa-file-alt"></i></div>
+            <div class="t-content" style="border:none;">
+              <div style="font-size:14px; font-weight:600;">Report Successfully Submitted</div>
+              <div style="font-size:12px; color:var(--text-muted);">Thank you. Your request is in the queuing system.</div>
+              <div style="font-size:11px; color:#6b7280; margin-top:5px;">Yesterday, 1:00 PM</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Create Issue Modal -->
+  <div class="c-modal" id="reportModal">
+    <div class="c-modal-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2 style="font-size:20px;"><i class="fas fa-bullhorn" style="color:var(--emergency-red);"></i> Submit New Report</h2>
+        <i class="fas fa-times" style="cursor:pointer; color:var(--text-muted);" onclick="closeReportModal()"></i>
+      </div>
+      
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">Please provide as much clear detail as possible to help NGOs respond accurately.</p>
+      
+      <form id="publicReportForm">
+        <label style="font-size:12px; font-weight:600; margin-bottom:5px; display:block;">Category</label>
+        <select class="form-control" style="width:100%; border:1px solid #d1d5db; padding:10px; border-radius:6px; margin-bottom:15px;">
+          <option>Food Shortage</option>
+          <option>Medical Emergency</option>
+          <option>Shelter Need</option>
+          <option>Education Disruption</option>
+          <option>General Rescue</option>
+        </select>
+
+        <label style="font-size:12px; font-weight:600; margin-bottom:5px; display:block;">Short Title</label>
+        <input type="text" placeholder="e.g. Broken Water Pipe causing flood" style="width:100%; border:1px solid #d1d5db; padding:10px; border-radius:6px; margin-bottom:15px;" required>
+        
+        <label style="font-size:12px; font-weight:600; margin-bottom:5px; display:block;">Exact Location</label>
+        <input type="text" placeholder="Street layout/Landmark" style="width:100%; border:1px solid #d1d5db; padding:10px; border-radius:6px; margin-bottom:15px;" required>
+
+        <label style="font-size:12px; font-weight:600; margin-bottom:5px; display:block;">Est. People Affected</label>
+        <input type="number" placeholder="Enter number" style="width:100%; border:1px solid #d1d5db; padding:10px; border-radius:6px; margin-bottom:15px;" required>
+
+        <button type="submit" class="btn-action btn-report-huge" style="width:100%; justify-content:center; margin-top:10px;">
+          Submit Report Immediately
+        </button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Firebase Integration -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="firebase.js"></script>
+
+  <script>
+    // Modal controls
+    function openReportModal() { document.getElementById('reportModal').classList.add('active'); }
+    function closeReportModal() { document.getElementById('reportModal').classList.remove('active'); }
+
+    // Mock Submission
+    document.getElementById('publicReportForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert("Your report has been successfully submitted to the server! It will appear in your pending list.");
+      closeReportModal();
+    });
+
+    // Auth 
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      try {
+        const docRef = db.collection("users").doc(user.uid);
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
+          const nameToDisplay = docSnap.data().fullName || user.email.split('@')[0];
+          document.getElementById("citNameDisplay").textContent = nameToDisplay;
+          document.getElementById("profileImage").src = `https://ui-avatars.com/api/?name=${encodeURIComponent(nameToDisplay)}&background=f3f4f6&color=111827&bold=true`;
+        } else {
+             document.getElementById("citNameDisplay").textContent = user.email.split('@')[0];
+        }
+      } catch(e) {}
+    });
+
+    async function logout(){
+      await auth.signOut();
+      localStorage.clear();
+      window.location.href = 'Index.html';
+    }
+  </script>
+</body>
+</html>
+

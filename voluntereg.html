@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Volunteer Registration</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="form-page">
+  <div class="container">
+    <div class="card large">
+
+      <h1>Volunteer Portal</h1>
+      <p class="subtitle">Create your volunteer profile</p>
+
+      <!-- IMPORTANT: onsubmit + name attributes -->
+      <form onsubmit="registerVOL(event)">
+        <h2>Volunteer Registration</h2>
+
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" name="name" placeholder="Enter full name" required>
+        </div>
+
+        <div class="field">
+          <label>Age</label>
+          <input type="number" name="age" placeholder="e.g. 22" required>
+        </div>
+
+        <div class="field">
+          <label>Gender</label>
+          <select name="gender" required>
+            <option value="">Select Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="tel" name="phone" placeholder="+91 XXXXX XXXXX" required>
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="Enter email" required>
+        </div>
+
+        <!-- auth.js needs pass + cpass -->
+        <div class="field">
+          <label>Password</label>
+          <input type="password" name="pass" placeholder="Create password" required>
+        </div>
+
+        <div class="field">
+          <label>Confirm Password</label>
+          <input type="password" name="cpass" placeholder="Confirm password" required>
+        </div>
+
+        <div class="field">
+          <label>State</label>
+          <input type="text" name="state" placeholder="State" required>
+        </div>
+
+        <div class="field">
+          <label>City</label>
+          <input type="text" name="city" placeholder="City" required>
+        </div>
+
+        <div class="field full-row">
+          <label>Area</label>
+          <input type="text" name="area" placeholder="Area / Locality" required>
+        </div>
+
+        <div class="field">
+          <label>Availability</label>
+          <select name="avail" required>
+            <option value="">Select Availability</option>
+            <option>Weekends</option>
+            <option>Weekdays</option>
+            <option>Evenings</option>
+            <option>Emergency On-call</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Preferred Work</label>
+          <select name="pref" required>
+            <option value="">Select Preference</option>
+            <option>Field Work</option>
+            <option>Remote Work</option>
+            <option>Any</option>
+          </select>
+        </div>
+
+        <div class="field full-row">
+          <label>Experience</label>
+          <input type="text" name="exp" placeholder="Short experience (optional)">
+        </div>
+
+        <!-- Skills: MUST have name=skill and value -->
+        <div class="field full-row">
+          <div class="group-title">Skills (Select Multiple)</div>
+          <div class="skills">
+            <label class="skill-item"><input type="checkbox" name="skill" value="Medical Support"> <span>Medical Support</span></label>
+            <label class="skill-item"><input type="checkbox" name="skill" value="Teaching"> <span>Teaching</span></label>
+            <label class="skill-item"><input type="checkbox" name="skill" value="Food Distribution"> <span>Food Distribution</span></label>
+            <label class="skill-item"><input type="checkbox" name="skill" value="Logistics"> <span>Logistics</span></label>
+            <label class="skill-item"><input type="checkbox" name="skill" value="Counseling"> <span>Counseling</span></label>
+            <label class="skill-item"><input type="checkbox" name="skill" value="Translation"> <span>Translation</span></label>
+            <label class="skill-item"><input type="checkbox" name="skill" value="IT Support"> <span>IT Support</span></label>
+            <label class="skill-item"><input type="checkbox" name="skill" value="Heavy Lifting"> <span>Heavy Lifting</span></label>
+            <label class="skill-item"><input type="checkbox" name="skill" value="Driving Support"> <span>Driving Support</span></label>
+          </div>
+        </div>
+
+        <div class="checkbox">
+          <input id="emergency" type="checkbox" name="emergency">
+          <label for="emergency">Available for emergency on-call</label>
+        </div>
+
+        <div class="full-row">
+          <button type="submit" class="btn success">Register as Volunteer</button>
+        </div>
+
+        <p class="small-text">
+          Already have an account?<a href="login.html">Login Here</a>
+        </p>
+      </form>
+
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="firebase.js"></script>
+  <script src="auth.js"></script>
+</body>
+</html>

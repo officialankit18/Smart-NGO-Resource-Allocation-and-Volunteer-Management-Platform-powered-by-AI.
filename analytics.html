@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics & Insights - NGOHubX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header" onclick="window.location.href='Index.html'" style="cursor: pointer;">
+      <img src="logoNGO.jpeg" style="height: 35px; width: auto; border-radius: 6px; object-fit: contain;" alt="Logo">
+      <span>NGOHubX</span>
+    </div>
+    
+    <div class="sidebar-menu">
+      <a href="ngo-dashboard.html" class="menu-item">
+        <i class="fas fa-th-large"></i> Dashboard
+      </a>
+      <a href="manage-tasks.html" class="menu-item">
+        <i class="fas fa-tasks"></i> Tasks & Requests
+      </a>
+      <a href="create-task.html" class="menu-item">
+        <i class="fas fa-plus-circle"></i> Create Task
+      </a>
+      <a href="manage-volunteers.html" class="menu-item">
+        <i class="fas fa-users"></i> Volunteers
+      </a>
+      <a href="analytics.html" class="menu-item active">
+        <i class="fas fa-chart-line"></i> Analytics
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="welcome-text">
+        <h1>Analytics & Insights</h1>
+        <span>Track performance, measure impact, and make smarter decisions.</span>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="export-group">
+          <button class="btn-export" onclick="alert('Downloading PDF Report...')"><i class="fas fa-file-pdf" style="color:#ef4444;"></i> PDF</button>
+          <button class="btn-export" onclick="alert('Downloading CSV Report...')"><i class="fas fa-file-csv" style="color:#10b981;"></i> CSV</button>
+          <button class="btn-export" onclick="alert('Downloading Excel Report...')"><i class="fas fa-file-excel" style="color:#10b981;"></i> Excel</button>
+        </div>
+
+        <button class="notification-btn">
+          <i class="far fa-bell"></i>
+        </button>
+
+        <div class="user-profile">
+          <div class="user-info" style="text-align: right;">
+            <span class="user-name" id="pocNameDisplay">User</span>
+            <span class="user-role">NGO Admin</span>
+          </div>
+          <img src="https://ui-avatars.com/api/?name=NGO&background=EFF6FF&color=1D4ED8" id="profileImage" alt="Profile">
+        </div>
+      </div>
+    </header>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+      
+      <!-- Filters Context -->
+      <div class="filters-bar" style="background:#f9fafb;">
+        <div class="filter-group">
+          <i class="far fa-calendar-alt" style="color: var(--text-muted);"></i>
+          <select class="filter-input" style="border:none; background:transparent;">
+            <option>Last 30 Days</option>
+            <option>This Quarter</option>
+            <option>This Year</option>
+            <option>All Time</option>
+          </select>
+        </div>
+        <div class="filter-group"><select class="filter-input"><option>All Categories</option></select></div>
+        <div class="filter-group"><select class="filter-input"><option>All Locations</option></select></div>
+        <div class="filter-group"><select class="filter-input"><option>All Statuses</option></select></div>
+        <button class="btn-action btn-secondary" style="padding: 6px 15px;" onclick="location.reload();"><i class="fas fa-sync-alt"></i> Refresh Data</button>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Total Tasks Created</h3>
+            <div class="value">845</div>
+            <div style="font-size:11px; color:#10b981; margin-top:5px;"><i class="fas fa-arrow-up"></i> 12% vs last month</div>
+          </div>
+          <div class="stat-icon icon-blue"><i class="fas fa-tasks"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Tasks Completed</h3>
+            <div class="value">720</div>
+            <div style="font-size:11px; color:#10b981; margin-top:5px;"><i class="fas fa-arrow-up"></i> 8% vs last month</div>
+          </div>
+          <div class="stat-icon icon-green"><i class="fas fa-check-circle"></i></div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Active Volunteers</h3>
+            <div class="value">412</div>
+            <div style="font-size:11px; color:#10b981; margin-top:5px;"><i class="fas fa-arrow-up"></i> 15% vs last month</div>
+          </div>
+          <div class="stat-icon icon-purple"><i class="fas fa-users"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Total Requests</h3>
+            <div class="value">1,204</div>
+            <div style="font-size:11px; color:#ef4444; margin-top:5px;"><i class="fas fa-arrow-up"></i> 25% vs last month</div>
+          </div>
+          <div class="stat-icon icon-orange"><i class="fas fa-inbox"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>People Helped</h3>
+            <div class="value">15,420</div>
+            <div style="font-size:11px; color:#10b981; margin-top:5px;"><i class="fas fa-arrow-up"></i> 40% vs last month</div>
+          </div>
+          <div class="stat-icon icon-teal"><i class="fas fa-hands-helping"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Success Rate</h3>
+            <div class="value">85.2%</div>
+            <div style="font-size:11px; color:#10b981; margin-top:5px;"><i class="fas fa-arrow-up"></i> 2.1% vs last month</div>
+          </div>
+          <div class="stat-icon" style="background:#fef2f2; color:#ef4444;"><i class="fas fa-heartbeat"></i></div>
+        </div>
+      </div>
+
+      <!-- Charts Row 1 -->
+      <div class="dashboard-grid" style="margin-bottom: 25px;">
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Tasks vs Requests Overview (Monthly)</h2>
+            <select class="filter-input"><option>2026</option></select>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="monthlyBarChart"></canvas>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Needs Distribution</h2>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="categoryPieChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row 2 & Deep Dives -->
+      <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr 1fr; margin-bottom: 25px;">
+        
+        <div class="panel">
+           <div class="panel-header">
+            <h2 class="panel-title">Weekly Request Trends</h2>
+          </div>
+          <div class="chart-wrapper" style="height: 200px;">
+            <canvas id="weeklyLineChart"></canvas>
+          </div>
+        </div>
+
+        <div class="panel">
+           <div class="panel-header">
+            <h2 class="panel-title">Volunteer Participation Growth</h2>
+          </div>
+          <div class="chart-wrapper" style="height: 200px;">
+            <canvas id="volunteerAreaChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Efficiency & Performance Row -->
+      <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr;">
+        <!-- Task Efficiency Metrics -->
+        <div class="data-card">
+          <h2 class="data-card-title"><i class="fas fa-tachometer-alt" style="color:var(--primary-green);"></i> Task & Volunteer Efficiency</h2>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px;">
+            <!-- Left col -->
+            <div>
+              <div class="progress-wrapper">
+                <div class="progress-header">
+                  <span>Urgent Task Resolution Rate</span>
+                  <span>92%</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 92%; background-color: var(--emergency-red);"></div>
+                </div>
+              </div>
+
+              <div class="progress-wrapper">
+                <div class="progress-header">
+                  <span>Regular Task Completion</span>
+                  <span>78%</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 78%; background-color: var(--primary-green);"></div>
+                </div>
+              </div>
+              
+              <div class="progress-wrapper">
+                <div class="progress-header">
+                  <span>Volunteer Attendance Rate</span>
+                  <span>88%</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 88%; background-color: var(--info-blue);"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right col -->
+            <div>
+               <div style="background:#f9fafb; padding:15px; border-radius:var(--radius-md); text-align:center; margin-bottom:15px;">
+                 <h4 style="font-size:12px; color:var(--text-muted); font-weight:500; text-transform:uppercase;">Avg Task Assignment Time</h4>
+                 <div style="font-size:24px; font-weight:700; color:var(--text-dark); margin:5px 0;">12 <span style="font-size:14px; color:var(--text-muted);">mins</span></div>
+               </div>
+
+               <div style="background:#f9fafb; padding:15px; border-radius:var(--radius-md); text-align:center;">
+                 <h4 style="font-size:12px; color:var(--text-muted); font-weight:500; text-transform:uppercase;">Avg Task Completion Time</h4>
+                 <div style="font-size:24px; font-weight:700; color:var(--text-dark); margin:5px 0;">4.5 <span style="font-size:14px; color:var(--text-muted);">hours</span></div>
+               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity Logs -->
+        <div class="data-card">
+          <h2 class="data-card-title"><i class="fas fa-list-ul" style="color:var(--text-muted);"></i> Recent Activity Logs</h2>
+          
+          <div class="activity-timeline">
+            <div class="timeline-item">
+              <div class="timeline-icon"></div>
+              <div class="timeline-title">Task #8021 Completed</div>
+              <div class="timeline-time">2 mins ago • Food Distribution by Rahul Sharma</div>
+            </div>
+            
+            <div class="timeline-item">
+              <div class="timeline-icon" style="background-color: var(--warning-orange);"></div>
+              <div class="timeline-title">New Request Received</div>
+              <div class="timeline-time">15 mins ago • Medical Emergency in North Zone</div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-icon" style="background-color: var(--info-blue);"></div>
+              <div class="timeline-title">Volunteer Registered</div>
+              <div class="timeline-time">1 hr ago • Neha Gupta joined (Skill: Teaching)</div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-icon" style="background-color: var(--emergency-red);"></div>
+              <div class="timeline-title">High Priority Alert Triggered</div>
+               <div class="timeline-time">2 hrs ago • Mass Shelter need identified</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Firebase Integration -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="firebase.js"></script>
+
+  <script>
+    // Auth Guard
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      
+      try {
+        const docRef = db.collection("ngos").doc(user.uid);
+        const docSnap = await docRef.get();
+        let ngoData = null;
+        if (docSnap.exists) {
+          ngoData = docSnap.data();
+        } else {
+          const generalUserDoc = await db.collection("users").doc(user.uid).get();
+          if(generalUserDoc.exists) ngoData = generalUserDoc.data();
+        }
+
+        if (ngoData) {
+          document.getElementById("pocNameDisplay").textContent = ngoData.pocName || user.email;
+          const rawName = ngoData.ngoName || ngoData.fullName || "NGO";
+          document.getElementById("profileImage").src = `https://ui-avatars.com/api/?name=${encodeURIComponent(rawName)}&background=EFF6FF&color=1D4ED8&bold=true`;
+        }
+
+        // Load Real Metrics
+        loadLiveAnalytics();
+      } catch (error) {
+        console.error("Error fetching admin data:", error);
+      }
+    });
+
+    async function loadLiveAnalytics() {
+        const kpis = {
+            tasksCreated: document.querySelectorAll('.stats-grid .stat-card:nth-child(1) .value')[0],
+            tasksCompleted: document.querySelectorAll('.stats-grid .stat-card:nth-child(2) .value')[0],
+            activeVolunteers: document.querySelectorAll('.stats-grid .stat-card:nth-child(3) .value')[0],
+            totalRequests: document.querySelectorAll('.stats-grid .stat-card:nth-child(4) .value')[0],
+            peopleHelped: document.querySelectorAll('.stats-grid .stat-card:nth-child(5) .value')[0],
+            successRate: document.querySelectorAll('.stats-grid .stat-card:nth-child(6) .value')[0]
+        };
+
+        // 1. Fetch Tasks
+        db.collection('tasks').onSnapshot(snap => {
+            let total = snap.size;
+            let completed = 0;
+            snap.forEach(doc => { if(doc.data().status === 'Completed') completed++; });
+            
+            kpis.tasksCreated.textContent = total;
+            kpis.tasksCompleted.textContent = completed;
+            kpis.successRate.textContent = total > 0 ? ((completed / total) * 100).toFixed(1) + '%' : '0%';
+        });
+
+        // 2. Fetch Volunteers
+        db.collection('users').where('role', '==', 'volunteer').onSnapshot(snap => {
+            kpis.activeVolunteers.textContent = snap.size;
+        });
+
+        // 3. Fetch Requests & People Helped
+        db.collection('requests').onSnapshot(snap => {
+            kpis.totalRequests.textContent = snap.size;
+            let helped = 0;
+            snap.forEach(doc => {
+                const data = doc.data();
+                if(data.status === 'Resolved' || data.status === 'Completed') {
+                    helped += parseInt(data.peopleAffected || 0);
+                }
+            });
+            kpis.peopleHelped.textContent = helped.toLocaleString();
+        });
+    }
+
+    async function logout(){
+      await auth.signOut();
+      localStorage.clear();
+      window.location.href = 'Index.html';
+    }
+
+    // Chart.js Setup
+    document.addEventListener("DOMContentLoaded", function() {
+      // Bar Chart: Comparison
+      const ctxBar = document.getElementById('monthlyBarChart').getContext('2d');
+      new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+          labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+          datasets: [
+            { label: 'Completed', data: [85, 92, 110, 95, 120], backgroundColor: '#4CAF50', borderRadius: 4 },
+            { label: 'Requests', data: [110, 130, 145, 125, 160], backgroundColor: '#3b82f6', borderRadius: 4 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+
+      // Pie Chart: Categories
+      const ctxPie = document.getElementById('categoryPieChart').getContext('2d');
+      new Chart(ctxPie, {
+        type: 'doughnut',
+        data: {
+          labels: ['Food', 'Medical', 'Shelter', 'Other'],
+          datasets: [{
+            data: [45, 30, 15, 10],
+            backgroundColor: ['#f59e0b', '#dc2626', '#3b82f6', '#9ca3af'],
+            borderWidth: 0
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '70%' }
+      });
+
+      // Simple Line for Weekly
+      const ctxLine = document.getElementById('weeklyLineChart').getContext('2d');
+      new Chart(ctxLine, {
+        type: 'line',
+        data: {
+          labels: ['W1', 'W2', 'W3', 'W4'],
+          datasets: [{
+            data: [12, 19, 15, 25],
+            borderColor: '#ef4444',
+            tension: 0.4,
+            borderWidth: 2,
+            fill: false
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+      });
+
+      // Area for Growth
+      const ctxArea = document.getElementById('volunteerAreaChart').getContext('2d');
+      new Chart(ctxArea, {
+        type: 'line',
+        data: {
+          labels: ['M1', 'M2', 'M3', 'M4'],
+          datasets: [{
+            data: [100, 150, 280, 412],
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+      });
+    });
+  </script>
+</body>
+</html>
+
+

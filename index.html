@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Resource Allocation - Connecting Urgent Needs with Immediate Help</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <!-- Logo -->
+            <div class="logo">
+                <img src="logoNGO.jpeg" alt="Smart Resource Logo" class="logo-img" style="height: 60px; width: auto; border-radius: 8px; object-fit: contain;">
+            </div>
+
+            <!-- Navigation -->
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="about.html">About NGOHubX</a></li>
+                    <li><a href="work.html">How It Works</a></li>
+                    <li><a href="campaigns.html">Live Campaigns</a></li>
+                    <li><a href="#" style="color:#ef4444; font-weight:700;" onclick="openEmergencyModal(); return false;"><i class="fas fa-exclamation-triangle" style="margin-right:5px;"></i>Emergency</a></li>
+                </ul>
+            </nav>
+
+            <!-- Right Side -->
+            <div class="header-actions">
+                <button onclick="openAuthModal()" class="btn-login" style="background:transparent; border:none; color:var(--text-dark); font-weight:600; cursor:pointer;">Login</button>
+                <a href="#" class="btn-support" onclick="openAuthModal(); return false;">Join Now</a>
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <div class="logo">
+                <img src="logoNGO.jpeg" alt="Smart Resource Logo" class="logo-img">
+            </div>
+            <button class="close-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="mobile-nav">
+            <a href="#home">Home</a>
+            <a href="about.html">About NGOHubX</a>
+            <a href="work.html">How It Works</a>
+            <a href="campaigns.html">Live Campaigns</a>
+            <a href="#" style="color:#ef4444; font-weight:700;" onclick="openEmergencyModal(); return false;"><i class="fas fa-exclamation-triangle" style="margin-right:5px;"></i>Emergency</a>
+            <a href="#" onclick="toggleMobileMenu(); openAuthModal(); return false;">Login</a>
+            <a href="#" class="btn-support" onclick="toggleMobileMenu(); openAuthModal(); return false;">Join Now</a>
+        </nav>
+    </div>
+
+    <!-- Hero Section - FIXED (Duplication Removed) -->
+    <section class="hero" id="home">
+        <div class="hero-slider" id="heroSlider">
+            <div class="hero-slide active">
+                <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=1600&h=900&fit=crop"
+                    alt="Volunteers helping">
+                <div class="hero-overlay"></div>
+            </div>
+            <div class="hero-slide">
+                <img src="https://t4.ftcdn.net/jpg/05/85/98/03/360_F_585980340_geg6GaDREebGe3cGAjtuElD6gS7HBvGr.jpg"
+                    alt="Aid distribution">
+                <div class="hero-overlay"></div>
+            </div>
+            <div class="hero-slide">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsvlXgy--nEvfPD5tyPB_lNYiL0GuyhyBnEA&sp"
+                    alt="Emergency response">
+                <div class="hero-overlay"></div>
+            </div>
+            <div class="hero-slide">
+                <img src="https://www.zauca.com/wp-content/uploads/NGO-Website-Design-Non-Profit-Organization-Website-Design-@-Rs.-3800.jpg"
+                    alt="Community support">
+                <div class="hero-overlay"></div>
+            </div>
+            <div class="hero-slide">
+                <img src="https://content.jdmagicbox.com/quickquotes/listicle/listicle_1725355610735_88irf_4659x2200.jpg?impolicy=queryparam&im=Resize=(847,400),aspect=fit&q=75"
+                    alt="Social Impact">
+                <div class="hero-overlay"></div>
+            </div>
+        </div>
+
+        <div class="hero-content">
+            <div class="container">
+                <h2 class="hero-subtitle">24/7 Emergency Response Network</h2>
+                <h1 class="hero-title">
+                    Connecting <span class="highlight">Urgent Needs</span> with Immediate Help
+                </h1>
+                <p class="hero-description">
+                    A real-time platform bridging the gap between citizens, NGOs, and volunteers to deliver fast
+                    emergency support and sustainable community development.
+                </p>
+                <div class="hero-actions">
+                    <button class="btn-primary-red" onclick="openEmergencyModal()">
+                        <i class="fas fa-exclamation-triangle"></i> Report Emergency
+                    </button>
+                    <a href="#" class="btn-secondary" onclick="openRegModal('volunteer', event); return false;">
+                        <i class="fas fa-hand-holding-heart"></i> Become a Volunteer
+                    </a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="15420">0</span>
+                        <span class="stat-label">Emergencies Handled</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="542">0</span>
+                        <span class="stat-label">NGOs Connected</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="12850">0</span>
+                        <span class="stat-label">Active Volunteers</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slider-dots" id="sliderDots"></div>
+
+        <button class="slider-arrow slider-prev" onclick="prevSlide()">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="slider-arrow slider-next" onclick="nextSlide()">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </section>
+
+    <!-- Our Programmes / How It Works -->
+    <section class="programmes" id="work">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Programmes</h2>
+                <p class="section-subtitle">Four pillars of effective resource allocation and emergency response</p>
+            </div>
+
+            <div class="programmes-grid">
+                <div class="programme-card">
+                    <div class="programme-icon blue">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="programme-content">
+                        <h3>Emergency Reporting</h3>
+                        <p>Citizens report urgent needs instantly through our digital platform with real-time location
+                            tracking and multimedia support.</p>
+                        <a href="about.html" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="programme-card">
+                    <div class="programme-icon green">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <div class="programme-content">
+                        <h3>NGO Verification</h3>
+                        <p>Trusted partner organizations verify requests and assess resource requirements for efficient
+                            allocation.</p>
+                        <a href="about.html" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="programme-card">
+                    <div class="programme-icon orange">
+                        <i class="fas fa-users-viewfinder"></i>
+                    </div>
+                    <div class="programme-content">
+                        <h3>Volunteer Matching</h3>
+                        <p>AI-powered system matches nearby volunteers with required skills to verified emergency
+                            requests.</p>
+                        <a href="about.html" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="programme-card">
+                    <div class="programme-icon purple">
+                        <i class="fas fa-truck-medical"></i>
+                    </div>
+                    <div class="programme-content">
+                        <h3>Rapid Deployment</h3>
+                        <p>Coordinated delivery of aid and assistance with real-time tracking until crisis resolution.
+                        </p>
+                        <a href="about.html" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Areas (SDGs Style) -->
+    <section class="impact-goals">
+        <div class="container">
+            <div class="section-header light">
+                <h2 class="section-title">Towards Achieving<br>Sustainable Development Goals</h2>
+            </div>
+
+            <div class="goals-container">
+                <div class="goal-item" data-color="#e91e63">
+                    <div class="goal-icon">
+                        <i class="fas fa-heart-pulse"></i>
+                    </div>
+                    <h4>Good Health &<br>Well Being</h4>
+                    <span class="goal-number">#3</span>
+                </div>
+
+                <div class="goal-item" data-color="#ff5722">
+                    <div class="goal-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h4>Quality<br>Education</h4>
+                    <span class="goal-number">#4</span>
+                </div>
+
+                <div class="goal-item" data-color="#ff9800">
+                    <div class="goal-icon">
+                        <i class="fas fa-venus-mars"></i>
+                    </div>
+                    <h4>Gender<br>Equality</h4>
+                    <span class="goal-number">#5</span>
+                </div>
+
+                <div class="goal-item" data-color="#8bc34a">
+                    <div class="goal-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h4>Decent Work &<br>Economic Growth</h4>
+                    <span class="goal-number">#8</span>
+                </div>
+
+                <div class="goal-item" data-color="#3f51b5">
+                    <div class="goal-icon">
+                        <i class="fas fa-scale-balanced"></i>
+                    </div>
+                    <h4>Reduced<br>Inequalities</h4>
+                    <span class="goal-number">#10</span>
+                </div>
+
+                <div class="goal-item" data-color="#4caf50">
+                    <div class="goal-icon">
+                        <i class="fas fa-hands-holding-circle"></i>
+                    </div>
+                    <h4>Partnerships for<br>the Goals</h4>
+                    <span class="goal-number">#17</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stories in Motion -->
+    <section class="stories">
+        <div class="container">
+            <h2 class="section-title">Stories in Motion</h2>
+            <div class="stories-carousel">
+                <button class="story-nav prev" onclick="scrollStories('left')">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+
+                <div class="stories-track" id="storiesTrack">
+                    <div class="story-card">
+                        <div class="story-image">
+                            <a href="https://www.youtube.com/watch?v=jqyXc15ljHY" target="_blank">
+                                <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?w=400&h=300&fit=crop"
+                                    alt="Story">
+                                <div class="play-btn"><i class="fas fa-play"></i></div>
+                            </a>
+                        </div>
+                        <div class="story-content">
+                            <h4>Rapid Flood Response</h4>
+                            <p>Kerala, 2023</p>
+                        </div>
+                    </div>
+
+                    <div class="story-card">
+                        <div class="story-image">
+                            <a href="https://www.youtube.com/watch?v=M73aYaibKWs" target="_blank">
+                                <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=400&h=300&fit=crop"
+                                    alt="Story">
+                                <div class="play-btn"><i class="fas fa-play"></i></div>
+                            </a>
+                        </div>
+                        <div class="story-content">
+                            <h4>Medical Camp Success</h4>
+                            <p>Rural Rajasthan</p>
+                        </div>
+                    </div>
+
+                    <div class="story-card">
+                        <div class="story-image">
+                            <a href="https://www.youtube.com/shorts/vkTMRU5Jchc" target="_blank">
+
+                                <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&h=300&fit=crop"
+                                    alt="Story">
+                                <div class="play-btn"><i class="fas fa-play"></i></div>
+                            </a>
+                        </div>
+                        <div class="story-content">
+                            <h4>Volunteer Network</h4>
+                            <p>Pan India</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="story-nav next" onclick="scrollStories('right')">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Support a Cause / User Roles -->
+    <section class="support-cause" id="get-involved">
+        <div class="container">
+            <h2 class="section-title">Support a Cause</h2>
+            <p class="section-subtitle">Choose how you want to contribute to emergency response and community welfare
+            </p>
+
+            <div class="causes-grid">
+                <div class="cause-card">
+                    <div class="cause-image">
+                        <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=600&h=400&fit=crop"
+                            alt="NGO">
+                        <div class="cause-overlay"></div>
+                        <div class="cause-tag">For Organizations</div>
+                    </div>
+                    <div class="cause-content">
+                        <h3>Register as NGO</h3>
+                        <p>Join our network of verified organizations to coordinate relief efforts, manage resources,
+                            and verify emergency requests in your operational area.</p>
+                        <a href="#" class="btn-cause" onclick="openRegModal('ngo',event)">Register Now <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="cause-card featured">
+                    <div class="cause-image">
+                        <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?w=600&h=400&fit=crop"
+                            alt="Volunteer">
+                        <div class="cause-overlay"></div>
+                        <div class="cause-badge">Most Popular</div>
+                        <div class="cause-tag">For Individuals</div>
+                    </div>
+                    <div class="cause-content">
+                        <h3>Become a Volunteer</h3>
+                        <p>Offer your skills and time to help communities in crisis. Receive alerts for nearby
+                            emergencies and track your social impact.</p>
+                        <a href="#" class="btn-cause" onclick="openRegModal('volunteer',event)">Join as Volunteer <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="cause-card">
+                    <div class="cause-image">
+                        <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=600&h=400&fit=crop"
+                            alt="Citizen">
+                        <div class="cause-overlay"></div>
+                        <div class="cause-tag">For Community</div>
+                    </div>
+                    <div class="cause-content">
+                        <h3>Register as Citizen</h3>
+                        <p>Report emergencies quickly and accurately. Track your request status in real-time and get
+                            connected with immediate help.</p>
+                        <a href="#" class="btn-cause" onclick="openRegModal('citizen',event)">Sign Up <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="cause-card">
+                    <div class="cause-image">
+                        <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=600&h=400&fit=crop"
+                            alt="Donate">
+                        <div class="cause-overlay"></div>
+                        <div class="cause-tag">Financial Support</div>
+                    </div>
+                    <div class="cause-content">
+                        <h3>Donate Resources</h3>
+                        <p>Support our emergency fund to help us maintain the platform and provide immediate financial
+                            aid during critical disasters.</p>
+                        <a href="#" class="btn-cause" onclick="openDonationModal(event)">Donate Now <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer" id="contact">
+        <div class="container">
+            <div class="footer-top" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-bottom: 40px;">
+                <div class="footer-column">
+                    <h4 style="color:var(--emergency-red); font-size:18px;"><i class="fas fa-phone-alt"></i> India Emergency Helplines</h4>
+                    <ul style="opacity: 0.9;">
+                        <li><a href="tel:112"><strong style="color:white; font-size:16px;">112</strong> - National Emergency Number</a></li>
+                        <li><a href="tel:100"><strong style="color:white; font-size:16px;">100</strong> - Police Control Room</a></li>
+                        <li><a href="tel:102"><strong style="color:white; font-size:16px;">102</strong> - Ambulance Helpline</a></li>
+                        <li><a href="tel:108"><strong style="color:white; font-size:16px;">108</strong> - Disaster Management Services</a></li>
+                        <li><a href="tel:1098"><strong style="color:white; font-size:16px;">1098</strong> - Child Helpline</a></li>
+                        <li><a href="tel:181"><strong style="color:white; font-size:16px;">181</strong> - Women In Distress Helpline</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4 style="font-size:18px;">Verified NGO Portals</h4>
+                    <ul style="opacity: 0.9;">
+                        <li><a href="https://ngodarpan.gov.in/" target="_blank">NGO Darpan (Govt. of India)</a></li>
+                        <li><a href="https://www.giveindia.org/" target="_blank">GiveIndia Foundation</a></li>
+                        <li><a href="https://guidestarindia.org/" target="_blank">GuideStar India Verification</a></li>
+                        <li><a href="https://www.ketto.org/" target="_blank">Ketto Medical Crowdfunding</a></li>
+                        <li><a href="https://milaap.org/" target="_blank">Milaap Community Support</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4 style="font-size:18px;">Global Authorities</h4>
+                    <ul style="opacity: 0.9;">
+                        <li><a href="https://www.unicef.org/india/" target="_blank">UNICEF India Region</a></li>
+                        <li><a href="https://www.who.int/india" target="_blank">World Health Organization</a></li>
+                        <li><a href="https://www.amnesty.org/en/location/asia-and-the-pacific/south-asia/india/" target="_blank">Amnesty International</a></li>
+                        <li><a href="https://www.pratham.org/" target="_blank">Pratham Education Foundation</a></li>
+                        <li><a href="https://goonj.org/" target="_blank">Goonj Disaster Relief</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-copyright" style="text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; margin-top: 20px;">
+                <p>&copy; 2026 Smart Resource Allocation for NGO. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Emergency Modal -->
+    <div class="emergency-modal" id="emergencyModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeEmergencyModal()">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="modal-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+
+            <h2>🚨 Report Emergency</h2>
+            <p>This will <strong>immediately alert</strong> all NGOs and available volunteers on the platform.</p>
+
+            <form id="emergencyForm" onsubmit="submitEmergency(event)">
+                <div class="form-group">
+                    <label>Emergency Type</label>
+                    <select name="emergencyType" id="emergencyType" class="form-control" required>
+                        <option value="">Select type...</option>
+                        <option>Medical Emergency</option>
+                        <option>Natural Disaster (Flood/Earthquake)</option>
+                        <option>Fire</option>
+                        <option>Accident</option>
+                        <option>Food/Water Shortage</option>
+                        <option>Safety/Security</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Your Location</label>
+                    <div class="location-input">
+                        <input type="text" id="emergencyLocation" name="location" class="form-control" placeholder="Enter address or use GPS" required>
+                        <button type="button" class="gps-btn" onclick="getEmergencyLocation()">
+                            <i class="fas fa-location-arrow"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" id="emergencyDesc" class="form-control" rows="3"
+                        placeholder="Briefly describe the situation and number of people affected..."
+                        required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="tel" name="contact" id="emergencyContact" class="form-control" placeholder="+91 XXXXX XXXXX" required>
+                </div>
+
+                <button type="submit" class="btn-submit-emergency" id="emergencySubmitBtn">
+                    <i class="fas fa-paper-plane"></i> Send Emergency Alert
+                </button>
+
+                <p class="form-note" id="emergencyFormNote">
+                    <i class="fas fa-shield-alt"></i> Your location is shared only with verified responders
+                </p>
+            </form>
+        </div>
+    </div>
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-content">
+            <button class="auth-close" onclick="closeAuthModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <img src="logoNGO.jpeg" style="height:50px; width:auto; border-radius:8px; margin-bottom:10px; object-fit:contain;">
+            <h2>Welcome Back</h2>
+            <p>Login to access your NGOHubX dashboard</p>
+
+            <form id="idxLoginForm" onsubmit="idxHandleLogin(event)">
+                <div class="auth-form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="idxEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="auth-form-group">
+                    <label>Password</label>
+                    <input type="password" id="idxPass" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="auth-btn" id="idxLoginBtn">Login</button>
+            </form>
+
+            <div style="display:flex; align-items:center; margin: 20px 0;">
+                <div style="flex:1; height:1px; background:#e5e7eb;"></div>
+                <span style="padding:0 10px; font-size:12px; color:var(--text-muted); font-weight:600;">OR</span>
+                <div style="flex:1; height:1px; background:#e5e7eb;"></div>
+            </div>
+
+            <button class="auth-google" onclick="idxHandleGoogle()">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg">
+                Continue with Google
+            </button>
+
+            <span id="idxAuthMsg" class="auth-msg"></span>
+            <p style="text-align:center; font-size:12px; color:#94a3b8; margin:15px 0 0;">New here? 
+                <a href="#" onclick="closeAuthModal(); openRegModal('citizen', event); return false;" style="color:#1D4ED8; font-weight:600;">Register as Citizen</a> &nbsp;|&nbsp;
+                <a href="#" onclick="closeAuthModal(); openRegModal('volunteer', event); return false;" style="color:#059669; font-weight:600;">Register as Volunteer</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Donation Modal -->
+    <div id="donationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); z-index:3000; align-items:center; justify-content:center;">
+        <div style="background:white; border-radius:16px; width:90%; max-width:560px; overflow:hidden; box-shadow:0 25px 60px rgba(0,0,0,0.3); animation:fadeIn 0.3s ease; position:relative;">
+            <!-- Top image -->
+            <div style="position:relative; height:200px; overflow:hidden;">
+                <img src="donation_children.png" alt="Children in need" style="width:100%; height:100%; object-fit:cover; filter:brightness(0.75);">
+                <div style="position:absolute; inset:0; background:linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.7)); display:flex; flex-direction:column; justify-content:flex-end; padding:20px;">
+                    <span style="color:#fbbf24; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase;">🕊️ Verified NGO Campaign</span>
+                    <h2 style="color:white; font-size:22px; margin:4px 0 0;">Your ₹100 Can Change a Life</h2>
+                </div>
+                <button onclick="closeDonationModal()" style="position:absolute; top:12px; right:12px; background:rgba(255,255,255,0.15); border:none; color:white; width:32px; height:32px; border-radius:50%; font-size:16px; cursor:pointer; backdrop-filter:blur(4px);">&times;</button>
+            </div>
+
+            <!-- Body -->
+            <div style="padding:25px; display:flex; gap:20px; align-items:flex-start;">
+                <!-- Left: Info -->
+                <div style="flex:1;">
+                    <h3 style="color:#0f172a; font-size:17px; margin:0 0 10px;">Help Us Feed & Educate India's Forgotten Children</h3>
+                    <p style="color:#64748b; font-size:13px; line-height:1.7; margin:0 0 15px;">Thousands of children in flood-hit slums lack food, medicine, and education every day. Your donation directly funds on-ground NGO volunteers working tirelessly to change that.</p>
+
+                    <div style="background:#f0fdf4; border-left:4px solid #059669; padding:10px 14px; border-radius:6px; margin-bottom:15px;">
+                        <p style="margin:0; font-size:12px; color:#065f46; font-weight:600;">✅ 100% Verified NGO · FCRA Registered · 80G Tax Exemption</p>
+                    </div>
+
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; font-size:12px; color:#475569;">
+                        <span>🍱 ₹100 = 2 meals</span>
+                        <span>📚 ₹500 = School kit</span>
+                        <span>💊 ₹1000 = Medical aid</span>
+                    </div>
+                </div>
+
+                <!-- Right: QR Code -->
+                <div style="text-align:center; flex-shrink:0;">
+                    <div style="border:2px solid #e5e7eb; border-radius:12px; padding:10px; background:#f9fafb;">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=ngohubx@sbi%26pn=NGOHubX%20Foundation%26am=500%26cu=INR%26tn=Donation+for+Children" alt="Donation QR Code" style="width:130px; height:130px; display:block; border-radius:6px;">
+                        <p style="margin:8px 0 0; font-size:11px; color:#64748b; font-weight:600;">Scan to Pay via UPI</p>
+                        <p style="margin:2px 0 0; font-size:10px; color:#94a3b8;">ngohubx@sbi</p>
+                    </div>
+                    <div style="margin-top:8px; background:#1D4ED8; color:white; font-size:11px; padding:4px 8px; border-radius:20px; font-weight:600;">🔒 Secure · Verified</div>
+                </div>
+            </div>
+
+            <!-- Donate Button -->
+            <div style="padding:0 25px 25px;">
+                <button onclick="closeDonationModal()" style="width:100%; background:linear-gradient(135deg,#059669,#065f46); color:white; border:none; padding:14px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:0.5px;">💚 Donate Now &amp; Make a Difference</button>
+                <p style="text-align:center; font-size:11px; color:#94a3b8; margin:10px 0 0;">Your contribution is 100% secured &amp; tax-deductible under 80G</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== REGISTRATION MODALS ===== -->
+    <!-- Shared modal shell; inner content swaps via JS -->
+    <div id="regModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:3100; align-items:center; justify-content:center;">
+      <div id="regModalBox" style="background:white; border-radius:14px; width:95%; max-width:500px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3); border-top:5px solid #DC2626; position:relative; animation:fadeIn 0.3s ease;">
+        <button onclick="closeRegModal()" style="position:sticky; top:12px; float:right; margin:12px 14px 0 0; background:#f1f5f9; border:none; width:30px; height:30px; border-radius:50%; font-size:16px; cursor:pointer; color:#0f172a; z-index:10;">×</button>
+
+        <!-- NGO Registration -->
+        <div id="regNGO" style="display:none; padding:28px;">
+          <h2 style="color:#0f172a; font-size:22px; margin:0 0 4px;"><i class="fas fa-building" style="color:#DC2626;"></i> NGO Registration</h2>
+          <p style="color:#64748b; font-size:13px; margin:0 0 20px;">Register your organization for verification on NGOHubX</p>
+          <form onsubmit="registerNGO(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div style="grid-column:span 2;"><label class="rl">NGO Name</label><input name="ngoName" type="text" placeholder="Enter NGO name" required class="ri"></div>
+            <div><label class="rl">Year Established</label><input name="year" type="number" placeholder="e.g. 2010" required class="ri"></div>
+            <div><label class="rl">Reg. Number</label><input name="regNo" type="text" placeholder="Trust deed / reg no." required class="ri"></div>
+            <div><label class="rl">POC Name</label><input name="pocName" type="text" placeholder="Point of contact" required class="ri"></div>
+            <div><label class="rl">Designation</label><input name="desig" type="text" placeholder="e.g. Director" required class="ri"></div>
+            <div><label class="rl">Phone</label><input name="phone" type="tel" placeholder="+91 XXXXX XXXXX" required class="ri"></div>
+            <div><label class="rl">Official Email</label><input name="email" type="email" placeholder="official@ngo.org" required class="ri"></div>
+            <div><label class="rl">State</label><input name="state" type="text" placeholder="State" required class="ri"></div>
+            <div><label class="rl">City</label><input name="city" type="text" placeholder="City" required class="ri"></div>
+            <div style="grid-column:span 2;"><label class="rl">Pincode</label><input name="pincode" type="text" placeholder="Pincode" required class="ri"></div>
+            <div style="grid-column:span 2;"><label class="rl">Operational Area</label><input name="area" type="text" placeholder="State / District / City" required class="ri"></div>
+            <div style="grid-column:span 2;"><label class="rl">Create Password</label><input name="pass" type="password" placeholder="Create password" required class="ri"></div>
+            <div style="grid-column:span 2;"><label class="rl">Confirm Password</label><input name="cpass" type="password" placeholder="Confirm password" required class="ri"></div>
+            <div style="grid-column:span 2;"><label style="display:flex;align-items:center;gap:8px;font-size:13px;"><input type="checkbox" name="agree" required> I agree to platform security rules</label></div>
+            <div style="grid-column:span 2;"><button type="submit" style="width:100%;padding:13px;background:#DC2626;color:white;border:none;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;"><i class="fas fa-check-circle"></i> Submit for Verification</button></div>
+            <p style="grid-column:span 2; text-align:center; font-size:12px; color:#94a3b8; margin:0;">Already registered? <a href="#" onclick="closeRegModal(); openAuthModal(); return false;" style="color:#DC2626;">Login Here</a></p>
+          </form>
+        </div>
+
+        <!-- Volunteer Registration -->
+        <div id="regVOL" style="display:none; padding:28px;">
+          <h2 style="color:#0f172a; font-size:22px; margin:0 0 4px;"><i class="fas fa-hand-holding-heart" style="color:#DC2626;"></i> Volunteer Registration</h2>
+          <p style="color:#64748b; font-size:13px; margin:0 0 20px;">Create your volunteer profile and start helping communities</p>
+          <form onsubmit="registerVOL(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div style="grid-column:span 2;"><label class="rl">Full Name</label><input name="name" type="text" placeholder="Enter full name" required class="ri"></div>
+            <div><label class="rl">Age</label><input name="age" type="number" placeholder="e.g. 22" required class="ri"></div>
+            <div><label class="rl">Gender</label><select name="gender" required class="ri"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+            <div><label class="rl">Phone</label><input name="phone" type="tel" placeholder="+91 XXXXX XXXXX" required class="ri"></div>
+            <div><label class="rl">Email</label><input name="email" type="email" placeholder="Enter email" required class="ri"></div>
+            <div><label class="rl">Password</label><input name="pass" type="password" placeholder="Create password" required class="ri"></div>
+            <div><label class="rl">Confirm Password</label><input name="cpass" type="password" placeholder="Confirm password" required class="ri"></div>
+            <div><label class="rl">State</label><input name="state" type="text" placeholder="State" required class="ri"></div>
+            <div><label class="rl">City</label><input name="city" type="text" placeholder="City" required class="ri"></div>
+            <div style="grid-column:span 2;"><label class="rl">Area</label><input name="area" type="text" placeholder="Area / Locality" required class="ri"></div>
+            <div><label class="rl">Availability</label><select name="avail" required class="ri"><option value="">Select</option><option>Weekends</option><option>Weekdays</option><option>Evenings</option><option>Emergency On-call</option></select></div>
+            <div><label class="rl">Preferred Work</label><select name="pref" required class="ri"><option value="">Select</option><option>Field Work</option><option>Remote Work</option><option>Any</option></select></div>
+            <div style="grid-column:span 2;"><label class="rl">Experience (optional)</label><input name="exp" type="text" placeholder="Brief experience" class="ri"></div>
+            <div style="grid-column:span 2;"><label style="display:flex;align-items:center;gap:8px;font-size:13px;"><input type="checkbox" name="emergency"> Available for emergency on-call</label></div>
+            <div style="grid-column:span 2;"><button type="submit" style="width:100%;padding:13px;background:#DC2626;color:white;border:none;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;"><i class="fas fa-user-plus"></i> Register as Volunteer</button></div>
+            <p style="grid-column:span 2; text-align:center; font-size:12px; color:#94a3b8; margin:0;">Already registered? <a href="#" onclick="closeRegModal(); openAuthModal(); return false;" style="color:#DC2626;">Login Here</a></p>
+          </form>
+        </div>
+
+        <!-- Citizen Registration -->
+        <div id="regCIT" style="display:none; padding:28px;">
+          <h2 style="color:#0f172a; font-size:22px; margin:0 0 4px;"><i class="fas fa-users" style="color:#DC2626;"></i> Citizen Registration</h2>
+          <p style="color:#64748b; font-size:13px; margin:0 0 20px;">Register to report emergencies and track community needs</p>
+          <form onsubmit="registerCIT(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div style="grid-column:span 2;"><label class="rl">Full Name</label><input name="name" type="text" placeholder="Enter your name" required class="ri"></div>
+            <div><label class="rl">Age</label><input name="age" type="number" placeholder="e.g. 25" required class="ri"></div>
+            <div><label class="rl">Phone</label><input name="phone" type="tel" placeholder="+91 XXXXX XXXXX" required class="ri"></div>
+            <div style="grid-column:span 2;"><label class="rl">Email</label><input name="email" type="email" placeholder="Enter email" required class="ri"></div>
+            <div><label class="rl">Password</label><input name="pass" type="password" placeholder="Create password" required class="ri"></div>
+            <div><label class="rl">Confirm Password</label><input name="cpass" type="password" placeholder="Confirm password" required class="ri"></div>
+            <div><label class="rl">State</label><input name="state" type="text" placeholder="State" required class="ri"></div>
+            <div><label class="rl">City</label><input name="city" type="text" placeholder="City" required class="ri"></div>
+            <div style="grid-column:span 2;"><label class="rl">Address</label><input name="address" type="text" placeholder="Full address" required class="ri"></div>
+            <div><label class="rl">Primary Language</label><input name="lang" type="text" placeholder="Hindi / English" required class="ri"></div>
+            <div><label class="rl">Emergency Contact</label><input name="emer" type="tel" placeholder="+91 XXXXX XXXXX" required class="ri"></div>
+            <div style="grid-column:span 2;"><button type="submit" style="width:100%;padding:13px;background:#DC2626;color:white;border:none;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;"><i class="fas fa-user-check"></i> Register as Citizen</button></div>
+            <p style="grid-column:span 2; text-align:center; font-size:12px; color:#94a3b8; margin:0;">Already registered? <a href="#" onclick="closeRegModal(); openAuthModal(); return false;" style="color:#DC2626;">Login Here</a></p>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <style>
+      .rl { display:block; font-size:12px; font-weight:600; color:#374151; margin-bottom:4px; }
+      .ri { width:100%; padding:10px 12px; border:1.5px solid #d1d5db; border-radius:7px; font-size:13px; outline:none; box-sizing:border-box; transition:border-color 0.2s; }
+      .ri:focus { border-color:#DC2626; box-shadow:0 0 0 3px rgba(220,38,38,0.1); }
+    </style>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <script src="firebase.js"></script>
+    <script src="auth.js"></script>
+    <script src="index.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create New Task - NGOHubX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header" onclick="window.location.href='Index.html'" style="cursor: pointer;">
+      <img src="logoNGO.jpeg" style="height: 35px; width: auto; border-radius: 6px; object-fit: contain;" alt="Logo">
+      <span>NGOHubX</span>
+    </div>
+    
+    <div class="sidebar-menu">
+      <a href="ngo-dashboard.html" class="menu-item">
+        <i class="fas fa-th-large"></i> Dashboard
+      </a>
+      <a href="manage-tasks.html" class="menu-item">
+        <i class="fas fa-tasks"></i> Tasks & Requests
+      </a>
+      <a href="create-task.html" class="menu-item active">
+        <i class="fas fa-plus-circle"></i> Create Task
+      </a>
+      <a href="manage-volunteers.html" class="menu-item">
+        <i class="fas fa-users"></i> Volunteers
+      </a>
+      <a href="analytics.html" class="menu-item">
+        <i class="fas fa-chart-line"></i> Analytics
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="welcome-text">
+        <h1>Create New Task</h1>
+        <span>Generate tasks based on community needs and assign volunteers.</span>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="notification-btn">
+          <i class="far fa-bell"></i>
+        </button>
+
+        <div class="user-profile">
+          <div class="user-info" style="text-align: right;">
+            <span class="user-name" id="pocNameDisplay">User</span>
+            <span class="user-role">NGO Admin</span>
+          </div>
+          <img src="https://ui-avatars.com/api/?name=NGO&background=EFF6FF&color=1D4ED8" id="profileImage" alt="Profile">
+        </div>
+      </div>
+    </header>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+      
+      <div class="create-task-grid">
+        <!-- Form Area -->
+        <div class="form-panel">
+          <form id="createTaskForm">
+            <!-- Basic Details -->
+            <div class="form-section">
+              <h3 class="section-title"><i class="fas fa-info-circle"></i> Basic Details</h3>
+              
+              <div class="form-group">
+                <label>Task Title <span class="required">*</span></label>
+                <input type="text" id="taskTitle" class="form-control" placeholder="e.g. South District Food Distribution" required oninput="updatePreview()">
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Category <span class="required">*</span></label>
+                  <select id="taskCategory" class="form-control" required onchange="updatePreview()">
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Food Distribution">Food Distribution</option>
+                    <option value="Medical Help">Medical Help</option>
+                    <option value="Education Support">Education Support</option>
+                    <option value="Emergency Relief">Emergency Relief</option>
+                    <option value="Survey Work">Survey Work</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Priority Level <span class="required">*</span></label>
+                  <select id="taskPriority" class="form-control" required onchange="updatePreview()">
+                    <option value="Low">Low</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="High">High</option>
+                    <option value="Critical">Critical</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Detailed Description <span class="required">*</span></label>
+                <textarea id="taskDesc" class="form-control" placeholder="Describe the task, requirements, and goal..." required oninput="updatePreview()"></textarea>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>No. of People Affected</label>
+                  <input type="number" id="taskPeople" class="form-control" placeholder="e.g. 50">
+                </div>
+                
+                <div class="form-group">
+                  <label>Estimated Duration (hrs)</label>
+                  <input type="number" id="taskDuration" class="form-control" placeholder="e.g. 4">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Task Date & Time <span class="required">*</span></label>
+                  <input type="datetime-local" id="taskDeadline" class="form-control" required onchange="updatePreview()">
+                </div>
+              </div>
+            </div>
+
+            <!-- Location Details -->
+            <div class="form-section">
+              <h3 class="section-title"><i class="fas fa-map-marker-alt"></i> Location Details</h3>
+              
+              <div class="form-group">
+                <label>Full Address <span class="required">*</span></label>
+                <input type="text" id="taskLocation" class="form-control" placeholder="Enter full address of the task site" required oninput="updatePreview()">
+              </div>
+            </div>
+
+            <!-- Volunteer & Assignment -->
+            <div class="form-section">
+              <h3 class="section-title"><i class="fas fa-users-cog"></i> Volunteer Assignment</h3>
+              
+              <div class="form-group">
+                <label>Assignment Strategy</label>
+                <div class="radio-cards">
+                  <div>
+                    <input type="radio" name="assignmentType" id="autoAssign" class="radio-card-input" value="auto" checked onchange="document.getElementById('manualSelectContainer').style.display='none'">
+                    <label for="autoAssign" class="radio-card-label">
+                      <i class="fas fa-robot"></i>
+                      <span style="font-weight: 600;">Smart Auto-Assign</span>
+                      <span style="font-size: 11px; color: var(--text-muted);">Matches by skill & distance</span>
+                    </label>
+                  </div>
+                  <div>
+                    <input type="radio" name="assignmentType" id="manualAssign" class="radio-card-input" value="manual" onchange="document.getElementById('manualSelectContainer').style.display='block'">
+                    <label for="manualAssign" class="radio-card-label">
+                      <i class="fas fa-hand-pointer"></i>
+                      <span style="font-weight: 600;">Manual Select</span>
+                      <span style="font-size: 11px; color: var(--text-muted);">Choose specific volunteers</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group" id="manualSelectContainer" style="display: none; margin-top: 15px;">
+                <label>Select Verified Volunteer <span class="required">*</span></label>
+                <select id="volunteerDropdown" class="form-input">
+                   <option value="">Fetching active volunteers...</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Volunteers Needed <span class="required">*</span></label>
+                  <input type="number" id="volunteersNeeded" class="form-control" placeholder="e.g. 5" required oninput="updatePreview()">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Required Skills (Select multiple)</label>
+                <div class="skills-container">
+                  <input type="checkbox" id="skill1" class="skill-checkbox" value="Medical Support" onchange="updatePreview()">
+                  <label for="skill1" class="skill-label">Medical Support</label>
+
+                  <input type="checkbox" id="skill2" class="skill-checkbox" value="Teaching" onchange="updatePreview()">
+                  <label for="skill2" class="skill-label">Teaching</label>
+
+                  <input type="checkbox" id="skill3" class="skill-checkbox" value="Food Distribution" onchange="updatePreview()">
+                  <label for="skill3" class="skill-label">Food Distribution</label>
+
+                  <input type="checkbox" id="skill4" class="skill-checkbox" value="Heavy Lifting" onchange="updatePreview()">
+                  <label for="skill4" class="skill-label">Heavy Lifting</label>
+
+                  <input type="checkbox" id="skill5" class="skill-checkbox" value="Logistics" onchange="updatePreview()">
+                  <label for="skill5" class="skill-label">Logistics</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reference Documents -->
+            <div class="form-section">
+              <h3 class="section-title"><i class="fas fa-file-upload"></i> Attachments</h3>
+              <input type="file" id="taskFile" class="form-control" accept="image/*,.pdf,.doc,.docx" multiple>
+              <span style="font-size: 12px; color: var(--text-muted); margin-top: 5px; display: block;">Upload images or reference documents (Optional)</span>
+            </div>
+
+            <!-- Actions -->
+            <div class="form-actions">
+              <button type="button" class="btn-action btn-secondary" onclick="document.getElementById('createTaskForm').reset(); updatePreview();">Reset</button>
+              <button type="button" class="btn-action btn-secondary">Save Draft</button>
+              <button type="submit" class="btn-action btn-primary"><i class="fas fa-paper-plane"></i> Publish Task</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Live Preview Panel -->
+        <div class="preview-panel">
+          <div class="preview-header">
+            <h3><i class="far fa-eye"></i> Live Preview</h3>
+            <span style="font-size: 12px; color: var(--text-muted);">How citizens & volunteers will see this</span>
+          </div>
+
+          <div class="preview-card">
+            <span class="preview-badge" id="previewBadge" style="background-color: var(--primary-light); color: var(--primary-green);">Category</span>
+            <span class="preview-badge" id="previewPriority" style="background-color: #f3f4f6; color: var(--text-muted); margin-left: 5px;">Priority</span>
+            
+            <h4 class="preview-title" id="previewTitle">Task Title Will Appear Here</h4>
+            <p class="preview-desc" id="previewDesc">Description preview...</p>
+
+            <div class="preview-meta">
+              <div class="meta-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span id="previewLocation">Location details</span>
+              </div>
+              <div class="meta-item">
+                <i class="far fa-clock"></i>
+                <span id="previewTime">Date & Time</span>
+              </div>
+              <div class="meta-item">
+                <i class="fas fa-users"></i>
+                <span id="previewVolunteers">0 Volunteers Needed</span>
+              </div>
+              <div class="meta-item">
+                <i class="fas fa-tools"></i>
+                <span id="previewSkills">Any Skill</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Success Modal -->
+  <div class="success-modal" id="successModal">
+    <div class="success-content">
+      <div class="success-icon"><i class="fas fa-check"></i></div>
+      <h2 style="margin-bottom: 10px;">Task Created!</h2>
+      <p style="color: var(--text-muted); margin-bottom: 25px;">The task has been successfully generated. Auto-assignment protocol initiated.</p>
+      <button class="btn-action btn-primary" style="width: 100%; justify-content: center;" onclick="window.location.href='ngo-dashboard.html'">Go to Dashboard</button>
+    </div>
+  </div>
+
+  <!-- Firebase Integration -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="firebase.js"></script>
+
+  <script>
+    // Auth Guard
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      
+      try {
+        const docRef = db.collection("ngos").doc(user.uid);
+        const docSnap = await docRef.get();
+        let ngoData = null;
+        if (docSnap.exists) {
+          ngoData = docSnap.data();
+        } else {
+          const generalUserDoc = await db.collection("users").doc(user.uid).get();
+          if(generalUserDoc.exists) ngoData = generalUserDoc.data();
+        }
+
+        if (ngoData) {
+          document.getElementById("pocNameDisplay").textContent = ngoData.pocName || user.email;
+          const rawName = ngoData.ngoName || ngoData.fullName || "NGO";
+          document.getElementById("profileImage").src = `https://ui-avatars.com/api/?name=${encodeURIComponent(rawName)}&background=EFF6FF&color=1D4ED8&bold=true`;
+        }
+      } catch (error) {
+        console.error("Error fetching admin data:", error);
+      }
+    });
+
+    async function logout(){
+      await auth.signOut();
+      localStorage.clear();
+      window.location.href = 'Index.html';
+    }
+
+    // Live Preview Logic
+    function updatePreview() {
+      // Title & Desc
+      document.getElementById('previewTitle').textContent = document.getElementById('taskTitle').value || "Task Title Will Appear Here";
+      document.getElementById('previewDesc').textContent = document.getElementById('taskDesc').value || "Description preview...";
+      
+      // Category Badge
+      const cat = document.getElementById('taskCategory').value;
+      const catBadge = document.getElementById('previewBadge');
+      catBadge.textContent = cat || "Category";
+      
+      // Priority
+      const prio = document.getElementById('taskPriority').value;
+      const prioBadge = document.getElementById('previewPriority');
+      prioBadge.textContent = prio + " Priority";
+      // Priority Coloring
+      if(prio === 'Critical') { prioBadge.style.backgroundColor = 'var(--emergency-light)'; prioBadge.style.color = 'var(--emergency-red)'; }
+      else if(prio === 'High') { prioBadge.style.backgroundColor = '#fffbeb'; prioBadge.style.color = 'var(--warning-orange)'; }
+      else { prioBadge.style.backgroundColor = '#f3f4f6'; prioBadge.style.color = 'var(--text-muted)'; }
+
+      // Location
+      document.getElementById('previewLocation').textContent = document.getElementById('taskLocation').value || "Location details";
+      
+      // Date
+      const dateVal = document.getElementById('taskDeadline').value;
+      if(dateVal) {
+        const d = new Date(dateVal);
+        document.getElementById('previewTime').textContent = d.toLocaleString('en-US', {dateStyle: 'medium', timeStyle: 'short'});
+      } else {
+        document.getElementById('previewTime').textContent = "Date & Time";
+      }
+
+      // Volunteers
+      const volCount = document.getElementById('volunteersNeeded').value;
+      document.getElementById('previewVolunteers').textContent = volCount ? `${volCount} Volunteers Needed` : "0 Volunteers Needed";
+
+      // Skills
+      const skillCheckboxes = document.querySelectorAll('.skill-checkbox:checked');
+      const selectedSkills = Array.from(skillCheckboxes).map(cb => cb.value);
+      document.getElementById('previewSkills').textContent = selectedSkills.length > 0 ? selectedSkills.join(', ') : "Any Skill";
+    }
+
+    // Prefill & Real-time Volunteers
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Prefill Check
+        if(sessionStorage.getItem('prefillTitle')) {
+            document.getElementById('taskTitle').value = sessionStorage.getItem('prefillTitle');
+            document.getElementById('taskLocation').value = sessionStorage.getItem('prefillLocation');
+            let cat = sessionStorage.getItem('prefillTitle').split(' ')[0];
+            let prio = sessionStorage.getItem('prefillPriority');
+            let desc = sessionStorage.getItem('prefillDesc');
+            
+            if(desc) document.getElementById('taskDesc').value = desc;
+            
+            const catSelect = document.getElementById('taskCategory');
+            for(let i=0; i<catSelect.options.length; i++) {
+               if(catSelect.options[i].value === cat) catSelect.selectedIndex = i;
+            }
+            
+            const prioSelect = document.getElementById('taskPriority');
+            for(let i=0; i<prioSelect.options.length; i++) {
+               if(prioSelect.options[i].value === prio) prioSelect.selectedIndex = i;
+            }
+            
+            // Clean up
+            sessionStorage.removeItem('prefillTitle');
+            sessionStorage.removeItem('prefillLocation');
+            sessionStorage.removeItem('prefillPriority');
+            sessionStorage.removeItem('prefillDesc');
+        }
+
+        // Fetch Volunteers for Manual Assignment
+        try {
+            const snap = await db.collection('users').where('role', '==', 'volunteer').get();
+            const dropdown = document.getElementById('volunteerDropdown');
+            if(!snap.empty) {
+                dropdown.innerHTML = '<option value="" disabled selected>Select a volunteer</option>';
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    let name = data.fullName || data.email;
+                    dropdown.innerHTML += `<option value="${doc.id}">${name}</option>`;
+                });
+            } else {
+                dropdown.innerHTML = '<option value="" disabled>No active volunteers found</option>';
+            }
+        } catch(e) { console.error('Error fetching volunteers', e); }
+        
+        updatePreview();
+    });
+
+    // Form Submission
+    document.getElementById('createTaskForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing...';
+      submitBtn.disabled = true;
+
+      try {
+        // Extract data
+        const title = document.getElementById('taskTitle').value;
+        const desc = document.getElementById('taskDesc').value;
+        const category = document.getElementById('taskCategory').value;
+        const priority = document.getElementById('taskPriority').value;
+        const location = document.getElementById('taskLocation').value;
+        const dateVal = document.getElementById('taskDeadline').value;
+        const volunteersNeeded = document.getElementById('volunteersNeeded').value;
+        
+        const isAuto = document.getElementById('autoAssign').checked;
+        const manualVolId = document.getElementById('volunteerDropdown').value;
+        
+        if(!isAuto && !manualVolId) {
+             throw new Error("Please select a volunteer for manual assignment.");
+        }
+
+        // Save to Firebase
+        const task = {
+          title, 
+          desc, 
+          category, 
+          priority, 
+          location,
+          date: dateVal,
+          volunteersNeeded: parseInt(volunteersNeeded) || 1,
+          status: isAuto ? "Open" : "In Progress", // If auto, it's open for taking. If manual, it's already assigned.
+          assignedTo: isAuto ? "Unassigned" : manualVolId,
+          createdAt: window.firebase ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString(),
+          ngoId: auth.currentUser ? auth.currentUser.uid : "unknown"
+        };
+        
+        await db.collection('tasks').add(task);
+        
+        // Show Success Modal
+        document.getElementById('successModal').classList.add('active');
+        
+      } catch (error) {
+        console.error("Error creating task: ", error);
+        alert(error.message || "Failed to create task. Please try again.");
+      } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
+
+

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NGO Dashboard - NGOHubX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <!-- Chart.js for analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header" onclick="window.location.href='Index.html'" style="cursor: pointer;">
+      <img src="logoNGO.jpeg" style="height: 35px; width: auto; border-radius: 6px; object-fit: contain;" alt="Logo">
+      <span>NGOHubX</span>
+    </div>
+    
+    <div class="sidebar-menu">
+      <a href="ngo-dashboard.html" class="menu-item active">
+        <i class="fas fa-th-large"></i> Dashboard
+      </a>
+      <a href="manage-tasks.html" class="menu-item">
+        <i class="fas fa-tasks"></i> Tasks & Requests
+      </a>
+      <a href="#" class="menu-item" style="color: #ef4444;" onclick="document.getElementById('emergencyPanel').scrollIntoView({behavior:'smooth'}); return false;">
+        <i class="fas fa-bullhorn"></i> Emergency Hub
+      </a>
+      <a href="create-task.html" class="menu-item">
+        <i class="fas fa-plus-circle"></i> Create Task
+      </a>
+      <a href="manage-volunteers.html" class="menu-item">
+        <i class="fas fa-users"></i> Volunteers
+      </a>
+      <a href="analytics.html" class="menu-item">
+        <i class="fas fa-chart-line"></i> Analytics
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- 🚨 LIVE EMERGENCY ALERT BANNER -->
+  <div id="emergencyAlertBanner" style="display:none; position:fixed; top:0; left:0; width:100%; z-index:9999;">
+    <div style="background:#DC2626; color:white; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; box-shadow:0 4px 20px rgba(220,38,38,0.5);">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span id="emergencyBlink" style="width:14px; height:14px; border-radius:50%; background:white; display:inline-block; animation:blinkRed 0.8s infinite;"></span>
+        <strong style="font-size:15px;">🚨 LIVE EMERGENCY ALERT</strong>
+        <span id="emergencyBannerText" style="font-size:14px; opacity:0.95;">Incoming emergency reported</span>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button id="bannerRespondBtn" style="background:white; color:#DC2626; padding:6px 14px; border:none; border-radius:6px; font-weight:700; font-size:13px; cursor:pointer;">➜ Respond Now</button>
+        <button onclick="this.closest('#emergencyAlertBanner').style.display='none'" style="background:rgba(255,255,255,0.2); border:none; color:white; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:13px;">✕ Dismiss</button>
+      </div>
+    </div>
+  </div>
+  <style>
+    @keyframes blinkRed { 0%,100%{opacity:1; transform:scale(1);} 50%{opacity:0.2; transform:scale(0.7);} }
+    @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+    .notif-item.emergency { background: #fff5f5; border-left: 3px solid #ef4444; }
+    .notif-item.emergency:hover { background: #fee2e2; }
+  </style>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="welcome-text">
+        <h1 id="welcomeGreeting">Welcome back, <span id="ngoNameDisplay">Loading...</span></h1>
+        <span id="dateDisplay">Monday, October 24, 2026</span>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Quick Actions in Topbar -->
+        <button id="topbarEmergencyBtn" class="btn-action" style="display:none; background:#ef4444; border:none; animation:pulseRed 1.5s infinite; box-shadow:0 0 15px rgba(239,68,68,0.4);" onclick="document.getElementById('emergencyPanel').scrollIntoView({behavior:'smooth'})">
+          <i class="fas fa-exclamation-triangle"></i> EMERGENCY ACTIVE
+        </button>
+
+        <a href="create-task.html" class="btn-action btn-primary">
+          <i class="fas fa-plus"></i> Create Task
+        </a>
+        
+        <div class="notification-container" id="notifContainerNgo">
+          <button class="notification-btn" onclick="document.getElementById('notifDropdownNgo').classList.toggle('active')">
+            <i class="far fa-bell"></i>
+            <span class="badge" id="ngoNotifBadge" style="display:none;">0</span>
+          </button>
+          
+          <div class="notification-dropdown" id="notifDropdownNgo">
+            <div class="notif-header">
+              <span>Notifications</span>
+              <span style="font-size:11px; color:var(--primary-blue); cursor:pointer;" onclick="document.getElementById('ngoNotifList').innerHTML='<div style=\'padding:15px;text-align:center;color:var(--text-muted);font-size:13px;\'>No new notifications</div>'; document.getElementById('ngoNotifBadge').style.display='none';">Mark all read</span>
+            </div>
+            <div class="notif-list" id="ngoNotifList">
+              <div style="padding:15px; text-align:center; color:var(--text-muted); font-size:13px;">No new notifications</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="user-profile">
+          <div class="user-info" style="text-align: right;">
+            <span class="user-name" id="pocNameDisplay">User</span>
+            <span class="user-role">NGO Admin</span>
+          </div>
+          <img src="https://ui-avatars.com/api/?name=NGO&background=EFF6FF&color=1D4ED8" id="profileImage" alt="Profile">
+        </div>
+      </div>
+    </header>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+      
+      <!-- EMERGENCY HUB SECTION -->
+      <div id="emergencyPanel" class="panel" style="border:2px solid #ef4444; margin-bottom:25px; background:white; overflow:hidden;">
+        <div class="panel-header" style="background:#fff5f5; border-bottom:1px solid #fee2e2; padding:15px 20px; display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="panel-title" style="color:#ef4444; font-weight:800;"><i class="fas fa-fire-extinguisher"></i> Emergency Dispatch Hub</h2>
+          <div style="display:flex; gap:15px; align-items:center;">
+            <span class="badge" style="background:#ef4444; color:white; padding:4px 12px; font-weight:700;" id="emergencyPanelCount">0 Active</span>
+            <button onclick="openEmergencyHistory()" style="background:none; border:none; color:#ef4444; font-size:20px; cursor:pointer; padding:5px;" title="View Completed History">
+              <i class="fas fa-history"></i>
+            </button>
+          </div>
+        </div>
+        <div id="emergencyList" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:20px; padding:20px; min-height:100px;">
+          <div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">
+            <i class="fas fa-shield-alt" style="font-size:48px; margin-bottom:15px; opacity:0.3;"></i>
+            <p style="font-size:15px; font-weight:600;">No emergency requests detected at this time.</p>
+            <p style="font-size:13px; margin-top:5px;">Real-time alerts from citizens will appear here instantly.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Secondary Row -->
+      <div class="quick-actions">
+        <button class="btn-action btn-secondary" onclick="window.location.href='manage-tasks.html'"><i class="fas fa-file-alt"></i> View Reports</button>
+        <button class="btn-action btn-secondary" onclick="window.location.href='manage-volunteers.html'"><i class="fas fa-user-plus"></i> Manage Volunteers</button>
+        <button class="btn-action btn-secondary" onclick="window.location.href='analytics.html'"><i class="fas fa-chart-pie"></i> Detailed Analytics</button>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Total Volunteers</h3>
+            <div class="value" id="statVolunteers">124</div>
+          </div>
+          <div class="stat-icon icon-blue">
+            <i class="fas fa-users-cog"></i>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Active Tasks</h3>
+            <div class="value" id="statActive">18</div>
+          </div>
+          <div class="stat-icon icon-orange">
+            <i class="fas fa-spinner fa-spin"></i>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Completed Tasks</h3>
+            <div class="value" id="statCompleted">452</div>
+          </div>
+          <div class="stat-icon icon-green">
+            <i class="fas fa-check-circle"></i>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Pending Requests</h3>
+            <div class="value" id="statPending">7</div>
+          </div>
+          <div class="stat-icon icon-red">
+            <i class="fas fa-exclamation-circle"></i>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>High Need Areas</h3>
+            <div class="value" id="statAreas">3</div>
+          </div>
+          <div class="stat-icon icon-purple">
+            <i class="fas fa-map-marked-alt"></i>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Total People Helped</h3>
+            <div class="value" id="statHelped">2,845</div>
+          </div>
+          <div class="stat-icon icon-teal">
+            <i class="fas fa-hands-helping"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Panels Layout -->
+      <div class="dashboard-grid">
+        
+        <!-- Left Column: Tasks -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Recent Tasks</h2>
+            <a href="manage-tasks.html" class="view-all">View All</a>
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="tasks-table">
+              <thead>
+                <tr>
+                  <th>Task Details</th>
+                  <th>Assigned To</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="dashboardTasksTable">
+                <!-- Dynamically filled with localStorage, fallback below -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Middle Column: Tasks Pending Review (NEW) -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title" style="color:var(--primary-dark);"><i class="fas fa-clipboard-check"></i> Verification Center</h2>
+            <span class="badge" id="reviewBadgeCount">0 Pending</span>
+          </div>
+          <div id="tasksReviewList" style="padding:15px; display:flex; flex-direction:column; gap:15px; max-height:450px; overflow-y:auto;">
+            <div style="text-align:center; padding:30px; color:var(--text-muted);">
+              <i class="fas fa-search" style="font-size:30px; opacity:0.3; margin-bottom:10px;"></i>
+              <p>No tasks submitted for review.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Urgent Requests (LIVE) -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Urgent Requests</h2>
+            <a href="manage-tasks.html" class="view-all">View All</a>
+          </div>
+          <div class="urgent-list" id="urgentRequestsList">
+            <div style="padding:20px; text-align:center; color:var(--text-muted); font-size:13px;">Loading live requests...</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-container">
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Weekly Task Completion</h2>
+            <select style="padding: 5px; border-radius: 4px; border: 1px solid var(--border-color);">
+              <option>This Week</option>
+              <option>Last Week</option>
+            </select>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="weeklyChart"></canvas>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Needs Distribution</h2>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="needsChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ===== Volunteer Assignment Modal ===== -->
+  <div id="assignVolModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9998; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:16px; padding:30px; width:90%; max-width:520px; max-height:85vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #e5e7eb; padding-bottom:15px;">
+        <div>
+          <h3 style="font-size:18px; font-weight:700; color:#111827; margin:0;"><i class="fas fa-user-plus" style="color:#10b981; margin-right:8px;"></i>Assign Volunteer</h3>
+          <p style="font-size:13px; color:#6b7280; margin:4px 0 0;">Task: <span id="modalTaskTitle" style="font-weight:600;"></span></p>
+        </div>
+        <button onclick="closeAssignModal()" style="background:none; border:none; font-size:20px; color:#6b7280; cursor:pointer;"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="display:block; font-size:13px; font-weight:700; color:#334155; margin-bottom:8px;">Select Volunteer</label>
+        <select id="volunteerSelect" style="width:100%; padding:12px; border:1px solid #d1d5db; border-radius:10px; font-size:14px;">
+          <option value="">Loading volunteers...</option>
+        </select>
+      </div>
+
+      <div id="volunteerProfilesList" style="display:flex; flex-direction:column; gap:12px;">
+        <div style="text-align:center; padding:18px; color:#6b7280; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px;">
+          Select a volunteer name to preview assignment details.
+        </div>
+      </div>
+
+      <div style="margin-top:20px; padding-top:15px; border-top:1px solid #e5e7eb; display:flex; gap:10px;">
+        <button onclick="closeAssignModal()" style="flex:1; padding:10px; border:1px solid #e5e7eb; border-radius:8px; background:white; color:#6b7280; font-weight:600; cursor:pointer;">Cancel</button>
+        <button id="confirmAssignBtn" onclick="confirmAssign()" style="flex:2; padding:10px; border:none; border-radius:8px; background:#10b981; color:white; font-weight:700; cursor:pointer; font-size:14px;"><i class="fas fa-check"></i> Confirm Assignment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Review Modal (NEW) -->
+  <div id="taskReviewModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9000; align-items:center; justify-content:center;">
+    <div class="modal-content" style="background:white; width:90%; max-width:550px; border-radius:16px; padding:30px; position:relative; max-height:90vh; overflow-y:auto;">
+      <button onclick="document.getElementById('taskReviewModal').style.display='none'" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:20px; cursor:pointer; color:#94a3b8;"><i class="fas fa-times"></i></button>
+      
+      <div style="text-align:center; margin-bottom:25px;">
+        <span style="background:#dcfce7; color:#059669; padding:5px 12px; border-radius:20px; font-weight:700; font-size:12px; text-transform:uppercase;">Submission for Review</span>
+        <h2 id="reviewModalTitle" style="margin-top:10px; font-size:24px; color:#0f172a;">Task Verification</h2>
+        <p id="reviewVolunteerName" style="font-size:14px; color:#64748b; margin-top:4px;">Submitted by Volunteer</p>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="display:block; font-size:13px; font-weight:700; color:#334155; margin-bottom:8px;">PROOF IMAGE</label>
+        <div id="reviewImageContainer" style="width:100%; height:220px; background:#f8fafc; border-radius:12px; overflow:hidden; border:1px solid #e2e8f0;">
+          <img id="reviewProofImg" src="" style="width:100%; height:100%; object-fit:cover;" alt="Proof">
+        </div>
+      </div>
+
+      <div style="margin-bottom:25px;">
+        <label style="display:block; font-size:13px; font-weight:700; color:#334155; margin-bottom:8px;">VOLUNTEER COMMENTS</label>
+        <div id="reviewComments" style="background:#f8fafc; padding:15px; border-radius:12px; font-size:14px; color:#475569; border-left:4px solid #cbd5e1;">
+          No comments provided.
+        </div>
+      </div>
+
+      <hr style="border:0; border-top:1px solid #e2e8f0; margin-bottom:25px;">
+
+      <div style="margin-bottom:25px;">
+        <label style="display:block; font-size:13px; font-weight:700; color:#334155; margin-bottom:8px;">NGO FEEDBACK</label>
+        <textarea id="ngoFeedbackText" class="form-control" style="width:100%; padding:12px; border:2px solid #e2e8f0; border-radius:10px; font-size:14px; resize:none;" rows="3" placeholder="Great job! / Missing some details..."></textarea>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <button onclick="submitTaskVerification('Partial')" style="padding:14px; background:#f1f5f9; color:#475569; border:none; border-radius:12px; font-weight:700; cursor:pointer;">Partial Complete</button>
+        <button onclick="submitTaskVerification('Completed')" style="padding:14px; background:#059669; color:white; border:none; border-radius:12px; font-weight:700; cursor:pointer;">Approve & Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emergency History Modal -->
+  <div id="emergencyHistoryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; width:90%; max-width:500px; border-radius:16px; padding:25px; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #e5e7eb; padding-bottom:10px;">
+        <h3 style="margin:0; font-size:18px;"><i class="fas fa-history" style="color:#ef4444;"></i> Completed Emergencies</h3>
+        <button onclick="document.getElementById('emergencyHistoryModal').style.display='none'" style="background:none; border:none; font-size:20px; color:#64748b; cursor:pointer;"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="emergencyHistoryList" style="max-height:400px; overflow-y:auto;">
+        <!-- Filled dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="firebase.js"></script>
+  <script src="auth.js"></script>
+
+  <script>
+    // Formatting date
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-US', options);
+
+    // Global State for Modals
+    let _assignContext = null;
+    let _selectedVolunteerId = null;
+    let _selectedVolunteerName = null;
+    let _reviewingTaskId = null;
+    let _notifiedEmergencies = new Set();
+    let _availableVolunteers = [];
+    const notifSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+
+    function playNotifSound() {
+      notifSound.play().catch(e => console.log('Audio autoplay blocked'));
+    }
+
+    function getTimestampValue(value) {
+      if (!value) return 0;
+      if (typeof value.toDate === 'function') return value.toDate().getTime();
+      const parsed = new Date(value);
+      return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+    }
+
+    function renderVolunteerPreview(volunteer) {
+      const listEl = document.getElementById('volunteerProfilesList');
+      if (!listEl) return;
+
+      if (!volunteer) {
+        listEl.innerHTML = `
+          <div style="text-align:center; padding:18px; color:#6b7280; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px;">
+            Select a volunteer name to preview assignment details.
+          </div>`;
+        return;
+      }
+
+      const skills = Array.isArray(volunteer.skills)
+        ? volunteer.skills.filter(Boolean).slice(0, 4).join(', ')
+        : (volunteer.skills || 'Skills not added');
+
+      listEl.innerHTML = `
+        <div style="padding:16px; border:1px solid #dbeafe; border-radius:14px; background:#f8fbff;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px;">
+            <div>
+              <h4 style="margin:0; font-size:16px; color:#0f172a;">${volunteer.fullName || volunteer.email || 'Volunteer'}</h4>
+              <p style="margin:4px 0 0; font-size:13px; color:#64748b;">${volunteer.email || 'No email found'}</p>
+            </div>
+            <span style="background:#dcfce7; color:#047857; padding:4px 10px; border-radius:999px; font-size:11px; font-weight:700;">Ready</span>
+          </div>
+          <div style="display:grid; gap:10px; font-size:13px; color:#334155;">
+            <div><i class="fas fa-map-marker-alt" style="width:16px; color:#ef4444;"></i> ${volunteer.location || 'Location not added'}</div>
+            <div><i class="fas fa-phone" style="width:16px; color:#3b82f6;"></i> ${volunteer.phone || volunteer.phoneNumber || 'Phone not added'}</div>
+            <div><i class="fas fa-tools" style="width:16px; color:#8b5cf6;"></i> ${skills}</div>
+          </div>
+        </div>`;
+    }
+
+    function handleVolunteerSelection() {
+      const select = document.getElementById('volunteerSelect');
+      const selectedVolunteer = _availableVolunteers.find((volunteer) => volunteer.id === select.value) || null;
+      _selectedVolunteerId = selectedVolunteer ? selectedVolunteer.id : null;
+      _selectedVolunteerName = selectedVolunteer ? (selectedVolunteer.fullName || selectedVolunteer.email || 'Volunteer') : null;
+      renderVolunteerPreview(selectedVolunteer);
+    }
+
+    document.getElementById('volunteerSelect')?.addEventListener('change', handleVolunteerSelection);
+
+    // Auth & Data Initialization
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      
+      try {
+        const docRef = db.collection("ngos").doc(user.uid);
+        const docSnap = await docRef.get();
+        let ngoData = docSnap.exists ? docSnap.data() : null;
+
+        if (!ngoData) {
+          const genDoc = await db.collection("users").doc(user.uid).get();
+          if(genDoc.exists) ngoData = genDoc.data();
+        }
+
+        if (ngoData) {
+          document.getElementById("ngoNameDisplay").textContent = ngoData.ngoName || ngoData.fullName || "NGO Partner";
+          document.getElementById("pocNameDisplay").textContent = ngoData.pocName || user.email;
+          const rawName = ngoData.ngoName || ngoData.fullName || "N G";
+          document.getElementById("profileImage").src = `https://ui-avatars.com/api/?name=${encodeURIComponent(rawName)}&background=EFF6FF&color=1D4ED8&bold=true`;
+        }
+
+        // Start Real-time Listeners
+        initRealTimeListeners();
+      } catch (error) {
+        console.error("Initialization error:", error);
+      }
+    });
+
+    function initRealTimeListeners() {
+      loadDashboardTasks();
+      loadUrgentRequests();
+      loadEmergencyHub();
+      loadVerificationCenter();
+      initNotifications();
+    }
+
+    function loadDashboardTasks() {
+      const tbody = document.getElementById('dashboardTasksTable');
+      db.collection('tasks').orderBy('createdAt', 'desc').limit(6).onSnapshot(snapshot => {
+        if(!tbody) return;
+        tbody.innerHTML = '';
+        if (snapshot.empty) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:var(--text-muted);">No active tasks found.</td></tr>';
+          return;
+        }
+        snapshot.forEach(doc => {
+          const task = doc.data();
+          if (task.status === "Completed") return; // Skip completed tasks
+
+          const d = task.createdAt ? task.createdAt.toDate() : new Date();
+          let statusHtml = `<span class="status-badge status-active">${task.status}</span>`;
+          if(task.status === "Open") statusHtml = `<span class="status-badge status-pending">Open</span>`;
+          if(task.status === "Completed") statusHtml = `<span class="status-badge status-completed"><i class="fas fa-check"></i> Completed</span>`;
+          
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><div class="task-info"><span class="task-name">${task.title}</span><span class="task-loc">${task.location}</span></div></td>
+            <td><div class="volunteer-list"><div class="v-avatar" style="background:#EFF6FF; color:#1D4ED8;"><i class="fas fa-user"></i></div></div></td>
+            <td style="color:var(--text-muted); font-size:13px;">${d.toLocaleDateString()}</td>
+            <td>${statusHtml}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    function loadUrgentRequests() {
+      db.collection('requests').where('status', '==', 'Pending Review').orderBy('createdAt', 'desc').limit(5).onSnapshot(snapshot => {
+        const list = document.getElementById('urgentRequestsList');
+        if(!list) return;
+        list.innerHTML = snapshot.empty ? '<div style="padding:20px; text-align:center; color:var(--text-muted);">No urgent requests.</div>' : '';
+        snapshot.forEach(doc => {
+          const r = doc.data();
+          const timeStr = r.createdAt ? new Date(r.createdAt.toDate()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : 'Just now';
+          list.innerHTML += `
+            <div class="urgent-card" style="border-left:4px solid ${r.urgency==='Critical'?'#ef4444':'#f59e0b'};">
+              <div class="urgent-header"><span class="urgent-type">${r.category}</span><span class="urgent-time">${timeStr}</span></div>
+              <p class="urgent-desc">${r.description ? r.description.substring(0,60)+'...' : ''}</p>
+              <div class="urgent-footer">
+                <span class="urgent-loc"><i class="fas fa-map-marker-alt"></i> ${r.location}</span>
+                <button class="btn-assign" onclick="openAssignModal('${doc.id}', '${r.category}', '${r.urgency}', false)">Assign</button>
+              </div>
+            </div>`;
+        });
+      });
+    }
+
+    let _completedEmergencies = [];
+
+    function openEmergencyHistory() {
+      const modal = document.getElementById('emergencyHistoryModal');
+      const list = document.getElementById('emergencyHistoryList');
+      modal.style.display = 'flex';
+      
+      if(_completedEmergencies.length === 0) {
+        list.innerHTML = '<p style="text-align:center; color:#64748b; padding:20px;">No completed emergencies yet.</p>';
+        return;
+      }
+
+      list.innerHTML = _completedEmergencies.map(e => `
+        <div style="padding:15px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <h4 style="margin:0; font-size:14px; color:#0f172a;">${e.type}</h4>
+            <p style="margin:4px 0 0; font-size:12px; color:#64748b;">${e.location}</p>
+          </div>
+          <span style="background:#dcfce7; color:#059669; padding:4px 10px; border-radius:12px; font-size:10px; font-weight:700;">Completed</span>
+        </div>
+      `).join('');
+    }
+
+    function loadEmergencyHub() {
+      db.collection('emergencies').onSnapshot(snapshot => {
+        const list = document.getElementById('emergencyList');
+        const countBadge = document.getElementById('emergencyPanelCount');
+        const topbarBtn = document.getElementById('topbarEmergencyBtn');
+        
+        const allDocs = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))
+          .sort((a, b) => getTimestampValue(b.reportedAt) - getTimestampValue(a.reportedAt));
+
+        _completedEmergencies = allDocs.filter(e => e.status === 'Completed');
+        const activeDocs = allDocs.filter(e => e.status !== 'Completed');
+        
+        if(activeDocs.length === 0) {
+          if(list) list.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;"><p>No active emergency requests.</p></div>';
+          if(countBadge) countBadge.textContent = '0 Active';
+          if(topbarBtn) topbarBtn.style.display = 'none';
+          return;
+        }
+
+        if(topbarBtn) topbarBtn.style.display = 'flex';
+        if(countBadge) countBadge.textContent = `${activeDocs.length} Active`;
+        if(list) {
+          list.innerHTML = '';
+          activeDocs.forEach(e => {
+            const status = e.status || 'active';
+            const isAssigned = status === 'assigned' || status === 'Assigned';
+            
+            let statusLabel = 'Awaiting Assignment';
+            let statusColor = '#ef4444';
+            
+            if (isAssigned) {
+              statusLabel = 'Assigned';
+              statusColor = '#0f766e';
+            }
+
+            const assignedHtml = e.assignedVolunteerName
+              ? `<div style="font-size:12px; color:#475569; margin-top:-4px;"><i class="fas fa-user-check" style="color:#10b981;"></i> Assigned to <strong>${e.assignedVolunteerName}</strong></div>`
+              : '';
+
+            list.innerHTML += `
+              <div style="background:white; border-radius:16px; padding:20px; border-left:6px solid #ef4444; box-shadow:0 10px 20px rgba(239,68,68,0.08); display:flex; flex-direction:column; gap:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+                  <h4 style="margin:0; font-size:16px;">${e.type}</h4>
+                  <span style="background:${statusColor}; color:white; padding:4px 10px; border-radius:999px; font-size:11px; font-weight:700; white-space:nowrap;">${statusLabel}</span>
+                </div>
+                <p style="font-size:14px; color:#475569; margin-bottom:15px;">${e.description}</p>
+                <div style="background:#f8fafc; padding:10px; border-radius:8px; font-size:12px; margin-bottom:15px;">
+                  <i class="fas fa-map-marker-alt" style="color:#ef4444;"></i> ${e.location}
+                </div>
+                ${assignedHtml}
+                <div style="display:flex; justify-content:center; gap:10px;">
+                  <button onclick="openAssignModal('${e.id}', 'EMERGENCY: ${e.type}', 'Critical', true)" style="flex:1; padding:10px; background:#ef4444; color:white; border:none; border-radius:8px; font-weight:700; cursor:pointer;">${isAssigned ? 'Reassign' : 'Assign Volunteer'}</button>
+                </div>
+              </div>`;
+          });
+        }
+      });
+    }
+
+    function loadVerificationCenter() {
+      db.collection('tasks').where('status', '==', 'Awaiting Verification').onSnapshot(async snapshot => {
+        const list = document.getElementById('tasksReviewList');
+        const badge = document.getElementById('reviewBadgeCount');
+        if(!list) return;
+
+        if(snapshot.empty) {
+          list.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted);"><p>No tasks pending review.</p></div>';
+          badge.textContent = '0 Pending';
+          return;
+        }
+
+        badge.textContent = `${snapshot.size} Pending`;
+        list.innerHTML = '';
+        for (const doc of snapshot.docs) {
+          const t = doc.data();
+          list.innerHTML += `
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+              <div><h4 style="font-size:13px; margin:0;">${t.title}</h4></div>
+              <button onclick="openReviewModal('${doc.id}')" style="padding:6px 12px; background:#1e293b; color:white; border:none; border-radius:6px; font-size:11px; cursor:pointer;">Review</button>
+            </div>`;
+        }
+      });
+    }
+
+    function initNotifications() {
+      db.collection('emergencies').onSnapshot(snapshot => {
+        const notifList = document.getElementById('ngoNotifList');
+        const badge = document.getElementById('ngoNotifBadge');
+        let allHtml = '';
+        let count = 0;
+        const emergencyDocs = snapshot.docs.slice().sort((a, b) => getTimestampValue(b.data().reportedAt) - getTimestampValue(a.data().reportedAt));
+
+        emergencyDocs.forEach((doc) => {
+          const data = doc.data();
+          count++;
+          if (!_notifiedEmergencies.has(doc.id)) {
+            _notifiedEmergencies.add(doc.id);
+            playNotifSound();
+          }
+          allHtml += `<div class="notif-item emergency" onclick="document.getElementById('emergencyPanel').scrollIntoView({behavior:'smooth'});"><div class="notif-content"><div class="notif-title">${data.type}</div><div class="notif-time">${data.location} • ${(data.status || 'active').toUpperCase()}</div></div></div>`;
+        });
+
+        if(notifList) notifList.innerHTML = allHtml || '<div style="padding:15px; text-align:center;">No new alerts</div>';
+        if(badge) { badge.textContent = count; badge.style.display = count > 0 ? 'block' : 'none'; }
+      });
+    }
+
+    async function openReviewModal(taskId) {
+      _reviewingTaskId = taskId;
+      const doc = await db.collection('tasks').doc(taskId).get();
+      const t = doc.data();
+      document.getElementById('reviewModalTitle').textContent = t.title;
+      document.getElementById('reviewProofImg').src = t.proofUrl || '';
+      document.getElementById('reviewComments').textContent = t.volunteerComments || 'No comments.';
+      document.getElementById('taskReviewModal').style.display = 'flex';
+    }
+
+    async function submitTaskVerification(status) {
+      if(!_reviewingTaskId) return;
+      const feedback = document.getElementById('ngoFeedbackText').value;
+      await db.collection('tasks').doc(_reviewingTaskId).update({ status, ngoFeedback: feedback, verifiedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      document.getElementById('taskReviewModal').style.display = 'none';
+      alert("Task verified!");
+    }
+
+    async function openAssignModal(reqId, title, urgency, isEmergency) {
+      _assignContext = { requestId: reqId, title, urgency, isEmergency };
+      _selectedVolunteerId = null;
+      _selectedVolunteerName = null;
+      document.getElementById('modalTaskTitle').textContent = title;
+      document.getElementById('assignVolModal').style.display = 'flex';
+      const volunteerSelect = document.getElementById('volunteerSelect');
+      const listEl = document.getElementById('volunteerProfilesList');
+      volunteerSelect.innerHTML = '<option value="">Loading volunteers...</option>';
+      volunteerSelect.value = '';
+      listEl.innerHTML = '<div style="text-align:center; padding:18px; color:#6b7280; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px;">Loading volunteer details...</div>';
+      const snap = await db.collection('users').where('role', '==', 'volunteer').get();
+      _availableVolunteers = snap.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() }))
+        .sort((first, second) => (first.fullName || first.email || '').localeCompare(second.fullName || second.email || ''));
+
+      if (_availableVolunteers.length === 0) {
+        volunteerSelect.innerHTML = '<option value="">No volunteers available</option>';
+        listEl.innerHTML = '<div style="text-align:center; padding:18px; color:#6b7280; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px;">No volunteer profiles found. Add volunteers first, then assign this request.</div>';
+        return;
+      }
+
+      volunteerSelect.innerHTML = '<option value="">Choose volunteer name</option>' + _availableVolunteers.map((volunteer) => `<option value="${volunteer.id}">${volunteer.fullName || volunteer.email || 'Volunteer'}</option>`).join('');
+      renderVolunteerPreview(null);
+    }
+
+    async function confirmAssign() {
+      if(!_selectedVolunteerId) return alert("Select a volunteer");
+
+      const confirmBtn = document.getElementById('confirmAssignBtn');
+      const originalBtnHtml = confirmBtn.innerHTML;
+      confirmBtn.disabled = true;
+      confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Assigning...';
+
+      try {
+        const isManualEmergency = _assignContext.isEmergency && _assignContext.requestId.startsWith('manual-emergency-');
+        const sourceCollection = _assignContext.isEmergency ? 'emergencies' : 'requests';
+        let sourceId = _assignContext.requestId;
+        let sourceData = {};
+
+        if (!isManualEmergency) {
+          const sourceSnap = await db.collection(sourceCollection).doc(sourceId).get();
+          sourceData = sourceSnap.exists ? sourceSnap.data() : {};
+        }
+
+        const normalizedTitle = (_assignContext.title || 'Emergency Response').replace(/^EMERGENCY:\s*/, '').trim();
+        const taskPayload = {
+          title: sourceData.title || sourceData.category || _assignContext.title || 'Support Task',
+          category: sourceData.category || (_assignContext.isEmergency ? 'Emergency Response' : 'General Support'),
+          desc: sourceData.description || (_assignContext.isEmergency ? `Immediate response needed for ${normalizedTitle}.` : 'Volunteer assignment created from NGO dashboard.'),
+          location: sourceData.location || 'Location to be confirmed',
+          priority: sourceData.urgency || _assignContext.urgency || 'High',
+          status: 'Assigned',
+          assignedTo: _selectedVolunteerId,
+          assignedVolunteerName: _selectedVolunteerName,
+          ngoId: auth.currentUser.uid,
+          volunteersNeeded: 1,
+          sourceCollection,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        if (isManualEmergency) {
+          const emergencyRef = await db.collection('emergencies').add({
+            type: normalizedTitle,
+            description: `Manual NGO emergency dispatch created for ${normalizedTitle}.`,
+            location: 'Location to be confirmed',
+            urgency: _assignContext.urgency || 'Critical',
+            status: 'assigned',
+            ngoId: auth.currentUser.uid,
+            assignedVolunteerId: _selectedVolunteerId,
+            assignedVolunteerName: _selectedVolunteerName,
+            reportedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          sourceId = emergencyRef.id;
+        }
+
+        taskPayload.sourceId = sourceId;
+        const taskRef = await db.collection('tasks').add(taskPayload);
+
+        await db.collection(sourceCollection).doc(sourceId).set({
+          status: 'assigned',
+          assignedVolunteerId: _selectedVolunteerId,
+          assignedVolunteerName: _selectedVolunteerName,
+          taskId: taskRef.id,
+          ngoId: auth.currentUser.uid,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        await db.collection('notifications').add({
+          recipientId: _selectedVolunteerId,
+          taskId: taskRef.id,
+          title: _assignContext.isEmergency ? 'Emergency Task Assigned' : 'New Task Assigned',
+          message: `${_assignContext.title} has been assigned to you. Please open your tasks and start when ready.`,
+          type: _assignContext.isEmergency ? 'tasks alerts' : 'tasks',
+          read: false,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        closeAssignModal();
+        alert(`Task assigned to ${_selectedVolunteerName}.`);
+      } catch (error) {
+        console.error('Assignment failed:', error);
+        alert('Assignment failed. Please try again.');
+      } finally {
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = originalBtnHtml;
+      }
+    }
+
+    async function convertEmergencyToOpenTask(id) {
+      const doc = await db.collection('emergencies').doc(id).get();
+      const e = doc.data();
+      await db.collection('tasks').add({ title: e.type, status: 'Open', ngoId: auth.currentUser.uid, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      await db.collection('emergencies').doc(id).update({ status: 'assigned' });
+      alert("Converted!");
+    }
+
+    function closeAssignModal() {
+      document.getElementById('assignVolModal').style.display = 'none';
+      document.getElementById('volunteerSelect').value = '';
+      _selectedVolunteerId = null;
+      _selectedVolunteerName = null;
+      renderVolunteerPreview(null);
+    }
+    async function logout() { await auth.signOut(); localStorage.clear(); window.location.href = 'Index.html'; }
+
+    // Chart.js initialization (static for now)
+    document.addEventListener("DOMContentLoaded", () => {
+      const ctxWeekly = document.getElementById('weeklyChart')?.getContext('2d');
+      if(ctxWeekly) new Chart(ctxWeekly, { type: 'bar', data: { labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], datasets: [{ label:'Tasks', data:[12,19,15,25,22,30,10], backgroundColor:'#4CAF50' }] } });
+    });
+  </script>
+</body>
+</html>
+

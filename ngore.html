@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NGO Registration</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="form-page">
+  <div class="container">
+    <div class="card large">
+
+      <h1>NGO Portal</h1>
+      <p class="subtitle">Register Your NGO for Verification</p>
+
+      <form onsubmit="registerNGO(event)">
+  <h2>NGO Registration</h2>
+
+  <div class="field">
+    <label>NGO Name</label>
+    <input name="ngoName" id="ngoName" type="text" placeholder="Enter NGO name" required>
+  </div>
+
+  <div class="field">
+    <label>Year of Establishment</label>
+    <input name="year" id="year" type="number" placeholder="e.g. 2010" required>
+  </div>
+
+  <div class="field full-row">
+    <label>Registration Number / Trust Deed Number</label>
+    <input name="regNo" id="regNo" type="text" placeholder="Enter registration number" required>
+  </div>
+
+  <div class="field full-row">
+    <label>Upload NGO Certificate</label>
+    <input name="cert" id="cert" type="file" required>
+  </div>
+
+  <h3 class="section-title">Point of Contact (POC)</h3>
+
+  <div class="field">
+    <label>POC Name</label>
+    <input name="pocName" id="pocName" type="text" placeholder="Enter POC name" required>
+  </div>
+
+  <div class="field">
+    <label>Designation</label>
+    <input name="desig" id="desig" type="text" placeholder="Enter designation" required>
+  </div>
+
+  <div class="field">
+    <label>Phone Number</label>
+    <input name="phone" id="phone" type="tel" placeholder="+91 XXXXX XXXXX" required>
+  </div>
+
+  <div class="field">
+    <label>Official Email</label>
+    <input name="email" id="email" type="email" placeholder="official@ngo.org" required>
+  </div>
+
+  <!-- NEW LOCATION -->
+  <div class="field">
+    <label>State</label>
+    <input name="state" type="text" placeholder="State" required>
+  </div>
+
+  <div class="field">
+    <label>City</label>
+    <input name="city" type="text" placeholder="City" required>
+  </div>
+
+  <div class="field full-row">
+    <label>Pincode</label>
+    <input name="pincode" type="text" placeholder="Pincode" required>
+  </div>
+
+  <div class="field full-row">
+    <label>Operational Area</label>
+    <input name="area" id="area" type="text" placeholder="State / District / City" required>
+  </div>
+
+  <div class="field full-row">
+    <div class="group-title">Focus Areas</div>
+    <div class="skills">
+      <label class="skill-item"><input type="checkbox" name="focus" value="Education"> <span>Education</span></label>
+      <label class="skill-item"><input type="checkbox" name="focus" value="Healthcare"> <span>Healthcare</span></label>
+      <label class="skill-item"><input type="checkbox" name="focus" value="Hunger Relief"> <span>Hunger Relief</span></label>
+      <label class="skill-item"><input type="checkbox" name="focus" value="Disaster Relief"> <span>Disaster Relief</span></label>
+      <label class="skill-item"><input type="checkbox" name="focus" value="Women Empowerment"> <span>Women Empowerment</span></label>
+      <label class="skill-item"><input type="checkbox" name="focus" value="Child Welfare"> <span>Child Welfare</span></label>
+      <label class="skill-item"><input type="checkbox" name="focus" value="Environment"> <span>Environment</span></label>
+      <label class="skill-item"><input type="checkbox" name="focus" value="Rural Development"> <span>Rural Development</span></label>
+    </div>
+  </div>
+
+  <h3 class="section-title">Security Setup</h3>
+
+  <div class="field">
+    <label>Create Password</label>
+    <input name="pass" id="pass" type="password" placeholder="Create password" required>
+  </div>
+
+  <div class="field">
+    <label>Confirm Password</label>
+    <input name="cpass" id="cpass" type="password" placeholder="Confirm password" required>
+  </div>
+
+  <div class="checkbox">
+    <input name="agree" id="agree" type="checkbox" required>
+    <label for="agree">I agree to enable 2FA and follow platform security rules.</label>
+  </div>
+
+  <div class="full-row">
+    <button type="submit" class="btn primary">Submit for Verification</button>
+  </div>
+
+  <p class="small-text">
+    Already registered? <a href="login.html">Login Here</a>
+  </p>
+</form>
+
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="firebase.js"></script>
+  <script src="auth.js"></script>
+</body>
+</html>

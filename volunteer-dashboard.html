@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Volunteer Dashboard - NGOHubX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <!-- Chart.js for analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Volunteer Specific Additional Styles */
+    .hero-greeting {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, #1e3a8a 100%);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      color: white;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-md);
+    }
+    
+    .hero-greeting h2 { font-size: 24px; font-family: 'Poppins', sans-serif; margin-bottom: 10px; }
+    .hero-greeting p { font-size: 14px; opacity: 0.9; }
+    
+    .badge-icon-lg {
+      font-size: 40px;
+      color: #fbbf24;
+      background: rgba(255,255,255,0.2);
+      padding: 15px;
+      border-radius: 50%;
+    }
+
+    .volunteer-achievement {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      background: #fafafa;
+      border-radius: var(--radius-md);
+      margin-bottom: 15px;
+      border: 1px solid var(--border-color);
+    }
+
+    .achievement-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: white;
+    }
+
+    .card-dark-blue { border-left-color: var(--info-blue) !important; }
+    .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-dark); }
+    .btn-outline:hover { background: var(--bg-main); }
+  </style>
+</head>
+
+<body>
+  <!-- 🚨 LIVE EMERGENCY ALERT BANNER -->
+  <div id="emergencyAlertBanner" style="display:none; position:fixed; top:0; left:0; width:100%; z-index:9999;">
+    <div style="background:#DC2626; color:white; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; box-shadow:0 4px 20px rgba(220,38,38,0.5);">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span style="width:14px; height:14px; border-radius:50%; background:white; display:inline-block; animation:blinkRed 0.8s infinite;"></span>
+        <strong style="font-size:15px;">🚨 LIVE EMERGENCY ALERT</strong>
+        <span id="emergencyBannerText" style="font-size:14px; opacity:0.95;">Incoming emergency reported</span>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <a href="volunteer-tasks.html" style="background:white; color:#DC2626; padding:6px 14px; border-radius:6px; font-weight:700; font-size:13px; text-decoration:none;">➜ See Tasks</a>
+        <button onclick="dismissEmergencyBanner()" style="background:rgba(255,255,255,0.2); border:none; color:white; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:13px;">✕ Dismiss</button>
+      </div>
+    </div>
+  </div>
+  <style>
+    @keyframes blinkRed { 0%,100%{opacity:1; transform:scale(1);} 50%{opacity:0.2; transform:scale(0.7);} }
+  </style>
+
+  <!-- Sidebar for Volunteer -->
+  <aside class="sidebar">
+    <div class="sidebar-header" onclick="window.location.href='Index.html'" style="cursor: pointer;">
+      <img src="logoNGO.jpeg" style="height: 35px; width: auto; border-radius: 6px; object-fit: contain;" alt="Logo">
+      <span>NGOHubX</span>
+    </div>
+    
+    <div class="sidebar-menu">
+      <a href="volunteer-dashboard.html" class="menu-item active">
+        <i class="fas fa-th-large"></i> Dashboard
+      </a>
+      <a href="volunteer-tasks.html" class="menu-item">
+        <i class="fas fa-search-location"></i> Find Tasks
+      </a>
+      <a href="volunteer-tasks.html" class="menu-item">
+        <i class="fas fa-clipboard-list"></i> My Tasks
+      </a>
+      <a href="volunteer-leaderboard.html" class="menu-item">
+        <i class="fas fa-trophy"></i> Leaderboard
+      </a>
+      <a href="volunteer-profile.html" class="menu-item">
+        <i class="fas fa-user-circle"></i> My Profile
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="welcome-text">
+        <h1 id="welcomeGreeting">Volunteer Hub</h1>
+        <span id="dateDisplay">Monday, October 24, 2026</span>
+      </div>
+
+      <div class="topbar-actions">
+        <!-- Status Toggle -->
+        <div style="display: flex; align-items: center; gap: 8px; margin-right: 15px; font-size: 13px; font-weight: 600;">
+          <span style="color: var(--text-muted);">Status:</span>
+          <span class="status-badge status-available"><i class="fas fa-circle" style="font-size:10px;"></i> Available</span>
+        </div>
+        
+        <div class="notification-container" id="notifContainerVol">
+          <button class="notification-btn" onclick="document.getElementById('notifDropdownVol').classList.toggle('active')">
+            <i class="far fa-bell"></i>
+            <span class="badge" id="volNotifBadge" style="display:none; background-color: var(--warning-orange);">0</span>
+          </button>
+          
+          <div class="notification-dropdown" id="notifDropdownVol">
+            <div class="notif-header">
+              <span>New Task Alerts</span>
+              <span style="font-size:11px; color:var(--primary-blue); cursor:pointer;" onclick="markAllDashboardNotificationsRead()">Mark all read</span>
+            </div>
+            <div class="notif-list" id="volNotifList">
+              <div style="padding:15px; text-align:center; color:var(--text-muted); font-size:13px;">Waiting for new tasks...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="user-profile">
+          <div class="user-info" style="text-align: right;">
+            <span class="user-name" id="volNameDisplay">Loading...</span>
+            <span class="user-role">Verified Volunteer</span>
+          </div>
+          <img src="https://ui-avatars.com/api/?name=Volunteer&background=EFF6FF&color=1D4ED8" id="profileImage" alt="Profile">
+        </div>
+      </div>
+    </header>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+      
+      <!-- Greeting Banner -->
+      <div class="hero-greeting">
+        <div>
+          <h2>Ready to make a difference today, <span id="heroName">Volunteer</span>?</h2>
+          <p id="heroTaskSummary">Checking your latest assignments and emergency alerts...</p>
+        </div>
+        <div class="badge-icon-lg">
+          <i class="fas fa-medal"></i>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <button class="btn-action btn-secondary" onclick="window.location.href='volunteer-tasks.html'"><i class="fas fa-search"></i> Find Nearby Tasks</button>
+        <button class="btn-action btn-secondary" onclick="alert('Availability updated!')"><i class="fas fa-calendar-check"></i> Update Availability</button>
+        <button class="btn-action btn-secondary" onclick="alert('Messaging NGO Support...')"><i class="fas fa-headset"></i> Support Center</button>
+        <button class="btn-action btn-secondary" onclick="window.location.href='volunteer-tasks.html'"><i class="fas fa-calendar-alt"></i> My Schedule</button>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Completed Tasks</h3>
+            <div class="value" id="completedTasksStat">0</div>
+          </div>
+          <div class="stat-icon icon-green"><i class="fas fa-check-double"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Assigned Today</h3>
+            <div class="value" id="assignedTodayStat">0</div>
+          </div>
+          <div class="stat-icon icon-orange"><i class="fas fa-clipboard"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Trust Rating</h3>
+            <div class="value">4.9 <span style="font-size:16px; color:#fbbf24;"><i class="fas fa-star"></i></span></div>
+          </div>
+          <div class="stat-icon" style="background:#fffbeb; color:#fbbf24;"><i class="fas fa-star-half-alt"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Impact Score</h3>
+            <div class="value">1,250</div>
+          </div>
+          <div class="stat-icon icon-blue"><i class="fas fa-bolt"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Total Hours</h3>
+            <div class="value">185</div>
+          </div>
+          <div class="stat-icon icon-purple"><i class="fas fa-clock"></i></div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-content">
+            <h3>Rank Tier</h3>
+            <div class="value" style="color: var(--primary-green);">Gold</div>
+          </div>
+          <div class="stat-icon icon-teal"><i class="fas fa-shield-alt"></i></div>
+        </div>
+      </div>
+
+      <!-- Main Panels Layout -->
+      <div class="dashboard-grid">
+        
+        <!-- Left Column: Tasks -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title"><i class="fas fa-sun" style="color:#fbbf24;"></i> Today's Assigned Tasks</h2>
+          </div>
+          
+          <div class="urgent-list" id="assignedTasksContainer">
+            <p style="color:var(--text-muted); font-size:13px; text-align:center; padding:20px;">Loading assigned tasks...</p>
+          </div>
+
+
+
+        </div>
+
+        <!-- Right Column: Achievements & Stats -->
+        <div>
+          <!-- Activity Panel -->
+          <div class="panel" style="margin-bottom: 25px;">
+            <div class="panel-header" style="margin-bottom: 15px;">
+              <h2 class="panel-title">My Achievements</h2>
+            </div>
+            
+            <div class="volunteer-achievement">
+              <div class="achievement-icon" style="background:#fbbf24;"><i class="fas fa-crown"></i></div>
+              <div>
+                <div style="font-size: 14px; font-weight: 600; color: var(--text-dark);">Top Tier Responder</div>
+                <div style="font-size: 12px; color: var(--text-muted);">Completed 10 tasks this month.</div>
+              </div>
+            </div>
+
+            <div class="volunteer-achievement">
+              <div class="achievement-icon" style="background:var(--info-blue);"><i class="fas fa-tachometer-alt"></i></div>
+              <div>
+                <div style="font-size: 14px; font-weight: 600; color: var(--text-dark);">Fast Action Badge</div>
+                <div style="font-size: 12px; color: var(--text-muted);">Average response time < 5 mins.</div>
+              </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 15px;">
+              <a href="#" class="view-all" onclick="alert('Viewing all achievements...')">View Badge Collection <i class="fas fa-arrow-right"></i></a>
+            </div>
+          </div>
+
+          <!-- Personal Growth Analytics -->
+          <div class="panel" style="margin-bottom: 25px;">
+             <div class="panel-header">
+               <h2 class="panel-title">Monthly Impact</h2>
+             </div>
+             <div class="chart-wrapper" style="height: 180px;">
+               <canvas id="volImpactChart"></canvas>
+             </div>
+          </div>
+
+          <!-- Recent Logs -->
+          <div class="panel">
+            <h2 class="panel-title" style="font-size: 15px; margin-bottom: 15px;">Recent Activity</h2>
+            <div class="detail-row" style="padding-bottom:10px; margin-bottom:10px; border-bottom:1px solid #f3f4f6;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); display: flex; align-items:center; justify-content:center; color: var(--primary-green);"><i class="fas fa-check"></i></div>
+              <div>
+                <div style="font-size: 13px; font-weight: 600;">Completed: Orphanage Supply Drive</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Earned 50 points • Yesterday</div>
+              </div>
+            </div>
+
+            <div class="detail-row" style="padding-bottom:10px; margin-bottom:0; border:none;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: #eff6ff; display: flex; align-items:center; justify-content:center; color: var(--info-blue);"><i class="fas fa-star"></i></div>
+              <div>
+                <div style="font-size: 13px; font-weight: 600;">Received 5-Star Rating!</div>
+                <div style="font-size: 11px; color: var(--text-muted);">From: Smile Foundation India • 3 days ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Firebase Integration -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="firebase.js"></script>
+
+  <script>
+    // Formatting date
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-US', options);
+
+    // Auth Guard
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      
+      try {
+        const docRef = db.collection("users").doc(user.uid);
+        const docSnap = await docRef.get();
+        let volData = null;
+        
+        if (docSnap.exists) {
+            volData = docSnap.data();
+        }
+
+        if (volData) {
+          const nameToDisplay = volData.fullName || user.email.split('@')[0];
+          document.getElementById("volNameDisplay").textContent = nameToDisplay;
+          document.getElementById("heroName").textContent = nameToDisplay;
+          
+          document.getElementById("profileImage").src = `https://ui-avatars.com/api/?name=${encodeURIComponent(nameToDisplay)}&background=EFF6FF&color=1D4ED8&bold=true`;
+        } else {
+             document.getElementById("volNameDisplay").textContent = user.email.split('@')[0];
+             document.getElementById("heroName").textContent = "Changemaker";
+        }
+
+      } catch (error) {
+        console.error("Error fetching volunteer data:", error);
+      }
+    });
+
+    async function logout(){
+      await auth.signOut();
+      localStorage.clear();
+      window.location.href = 'Index.html';
+    }
+
+    // Chart.js Implementations
+    document.addEventListener("DOMContentLoaded", function() {
+      // Impact Line Chart
+      const ctxImpact = document.getElementById('volImpactChart').getContext('2d');
+      new Chart(ctxImpact, {
+        type: 'line',
+        data: {
+          labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
+          datasets: [{
+            label: 'Hours Contributed',
+            data: [15, 22, 18, 30, 45],
+            borderColor: '#4CAF50',
+            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+            fill: true,
+            tension: 0.4,
+            borderWidth: 2,
+            pointBackgroundColor: '#4CAF50'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { borderDash: [5, 5] }, ticks: { font: {size: 10} } },
+            x: { grid: { display: false }, ticks: { font: {size: 10} } }
+          }
+        }
+      });
+    });
+  </script>
+
+  <!-- Real-Time Emergency Listener -->
+  <script>
+    let lastBannerDismissed = null;
+    let currentVolunteerId = null;
+    let dashboardNotifications = [];
+
+    function getTimestampValue(value) {
+      if (!value) return 0;
+      if (typeof value.toDate === 'function') return value.toDate().getTime();
+      const parsed = new Date(value);
+      return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+    }
+
+    function formatRelativeTime(value) {
+      const timestamp = getTimestampValue(value);
+      if (!timestamp) return 'Just now';
+      const diffMinutes = Math.max(1, Math.floor((Date.now() - timestamp) / 60000));
+      if (diffMinutes < 60) return `${diffMinutes} min ago`;
+      const diffHours = Math.floor(diffMinutes / 60);
+      if (diffHours < 24) return `${diffHours} hr ago`;
+      const diffDays = Math.floor(diffHours / 24);
+      return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    }
+
+    function dismissEmergencyBanner() {
+      const banner = document.getElementById('emergencyAlertBanner');
+      if (banner) banner.style.display = 'none';
+      lastBannerDismissed = Date.now();
+    }
+
+    function renderAssignedTasks(taskDocs) {
+      const container = document.getElementById('assignedTasksContainer');
+      const heroTaskSummary = document.getElementById('heroTaskSummary');
+      const assignedTodayStat = document.getElementById('assignedTodayStat');
+      const completedTasksStat = document.getElementById('completedTasksStat');
+      if (!container || !heroTaskSummary || !assignedTodayStat || !completedTasksStat) return;
+
+      const sortedTasks = taskDocs.slice().sort((first, second) => getTimestampValue(second.createdAt) - getTimestampValue(first.createdAt));
+      const activeTasks = sortedTasks.filter((task) => ['Assigned', 'In Progress', 'Awaiting Verification'].includes(task.status));
+      const completedTasks = sortedTasks.filter((task) => task.status === 'Completed');
+
+      assignedTodayStat.textContent = activeTasks.filter((task) => ['Assigned', 'In Progress'].includes(task.status)).length;
+      completedTasksStat.textContent = completedTasks.length;
+
+      if (activeTasks.length === 0) {
+        heroTaskSummary.textContent = 'No direct assignments right now. Keep an eye on your notifications for emergency dispatches.';
+        container.innerHTML = '<p style="color:var(--text-muted); font-size:13px; text-align:center; padding:20px;">No assigned tasks yet. New NGO assignments will appear here automatically.</p>';
+        return;
+      }
+
+      heroTaskSummary.textContent = `You currently have ${activeTasks.length} active assignment${activeTasks.length > 1 ? 's' : ''}. Emergency dispatches will appear here first.`;
+      container.innerHTML = '';
+
+      activeTasks.slice(0, 4).forEach((task) => {
+        const isAssigned = task.status === 'Assigned';
+        const isReviewPending = task.status === 'Awaiting Verification';
+        const statusText = isAssigned ? 'Assigned by NGO' : isReviewPending ? 'Proof Submitted' : 'In Progress';
+        const statusColor = isAssigned ? 'var(--warning-orange)' : isReviewPending ? 'var(--text-muted)' : 'var(--info-blue)';
+        const actionButton = isReviewPending
+          ? '<button class="btn-action btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="window.location.href=\'volunteer-tasks.html\'">Track Status</button>'
+          : isAssigned
+            ? `<button class="btn-action btn-primary" style="padding: 6px 12px; font-size: 12px; background: var(--info-blue);" onclick="startAssignedTask('${task.id}')">Start Task</button>`
+            : '<button class="btn-action btn-primary" style="padding: 6px 12px; font-size: 12px; background: var(--info-blue);" onclick="window.location.href=\'volunteer-tasks.html\'">Open Task</button>';
+
+        container.innerHTML += `
+          <div class="urgent-card card-dark-blue" style="${isReviewPending ? 'opacity:0.82; border-left-color: var(--text-muted);' : ''}">
+            <div class="urgent-header">
+              <span class="urgent-type" style="color:${statusColor};"><i class="fas fa-clipboard-list"></i> ${task.category || 'Assigned Task'}</span>
+              <span class="urgent-time" style="color:${statusColor}; font-weight:600;">${statusText}</span>
+            </div>
+            <h4 style="font-size:16px; margin-bottom:5px;">${task.title || 'Support Task'}</h4>
+            <p class="urgent-desc">${task.desc || 'Please review your assignment details and begin once ready.'}</p>
+            <div style="display:flex; gap:15px; margin-bottom:15px; font-size:12px; color:var(--text-muted); flex-wrap:wrap;">
+              <span><i class="far fa-building"></i> ${task.sourceCollection === 'emergencies' ? 'Emergency Hub' : 'NGO Assignment'}</span>
+              <span><i class="fas fa-map-marker-alt"></i> ${task.location || 'Location pending'}</span>
+              <span><i class="fas fa-fire" style="color:var(--warning-orange);"></i> ${task.priority || 'High'} Priority</span>
+            </div>
+            <div class="urgent-footer" style="padding-top:15px; border-top:1px dashed var(--border-color);">
+              <span class="urgent-loc"><i class="far fa-clock"></i> ${formatRelativeTime(task.createdAt)}</span>
+              <div style="display:flex; gap:10px;">
+                <button class="btn-action btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="window.location.href='volunteer-tasks.html'">Details</button>
+                ${actionButton}
+              </div>
+            </div>
+          </div>`;
+      });
+    }
+
+    function renderDashboardNotifications() {
+      const notifList = document.getElementById('volNotifList');
+      const badge = document.getElementById('volNotifBadge');
+      if (!notifList || !badge) return;
+
+      const sortedNotifications = dashboardNotifications.slice().sort((first, second) => getTimestampValue(second.createdAt) - getTimestampValue(first.createdAt));
+      const unreadCount = sortedNotifications.filter((item) => !item.read).length;
+
+      if (sortedNotifications.length === 0) {
+        notifList.innerHTML = '<div style="padding:15px; text-align:center; color:var(--text-muted); font-size:13px;">No new task alerts.</div>';
+        badge.style.display = 'none';
+        return;
+      }
+
+      notifList.innerHTML = sortedNotifications.slice(0, 6).map((notification) => {
+        const isAlert = (notification.type || '').includes('alerts');
+        const iconBg = isAlert ? '#fef2f2' : '#eff6ff';
+        const iconColor = isAlert ? '#ef4444' : '#1d4ed8';
+        const icon = isAlert ? 'fa-triangle-exclamation' : 'fa-clipboard-list';
+
+        return `
+          <div class="notif-item" onclick="window.location.href='volunteer-notifications.html'">
+            <div class="notif-icon" style="background:${iconBg}; color:${iconColor};"><i class="fas ${icon}"></i></div>
+            <div class="notif-content">
+              <div class="notif-title">${notification.title || 'Task Update'}</div>
+              <div class="notif-time">${formatRelativeTime(notification.createdAt)}${notification.read ? '' : ' • Unread'}</div>
+            </div>
+          </div>`;
+      }).join('');
+
+      badge.textContent = unreadCount;
+      badge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+      badge.style.animation = unreadCount > 0 ? 'pulse 2s infinite' : '';
+    }
+
+    async function markAllDashboardNotificationsRead() {
+      if (!currentVolunteerId) return;
+      const unreadNotifications = dashboardNotifications.filter((notification) => !notification.read);
+      if (unreadNotifications.length === 0) return;
+
+      const batch = db.batch();
+      unreadNotifications.forEach((notification) => {
+        batch.update(db.collection('notifications').doc(notification.id), { read: true });
+      });
+      await batch.commit();
+    }
+
+    window.startAssignedTask = async function(taskId) {
+      if (!auth.currentUser) return alert('You must be logged in to start tasks.');
+      try {
+        await db.collection('tasks').doc(taskId).update({ status: 'In Progress' });
+        alert('Task marked as In Progress.');
+        window.location.href = 'volunteer-tasks.html';
+      } catch (error) {
+        console.error('Error starting task:', error);
+        alert('Unable to start task right now.');
+      }
+    };
+
+    if (window.db) {
+      db.collection('emergencies')
+        .where('status', '==', 'active')
+        .orderBy('reportedAt', 'desc')
+        .limit(1)
+        .onSnapshot(snapshot => {
+          if (snapshot.empty) return;
+          const doc  = snapshot.docs[0];
+          const data = doc.data();
+          const banner = document.getElementById('emergencyAlertBanner');
+          const text   = document.getElementById('emergencyBannerText');
+          if (!banner || !text) return;
+          if (lastBannerDismissed && (Date.now() - lastBannerDismissed < 60000)) return;
+          text.textContent = `${data.type} at ${data.location} — ${data.description.substring(0, 80)}...`;
+          banner.style.display = 'block';
+          document.querySelector('.main-content').style.paddingTop = '60px';
+        });
+
+      // Listen for REAL-TIME 'Open' TASKS for the auto-assignment pool
+      db.collection('tasks')
+        .where('status', '==', 'Open')
+        .orderBy('createdAt', 'desc')
+        .limit(10)
+        .onSnapshot(snapshot => {
+          const container = document.getElementById('availableTasksContainer');
+          if (container) container.innerHTML = '';
+
+          if (snapshot.empty) {
+             if(container) container.innerHTML = '<p style="color:var(--text-muted); font-size:13px; grid-column: span 2; text-align: center;">No urgent open tasks available right now. We will notify you when NGOs post new needs.</p>';
+             return;
+          }
+
+          snapshot.forEach(doc => {
+            const task = doc.data();
+            const taskId = doc.id;
+            
+            let badgeColor = "#fffbeb";
+            let badgeText = "var(--warning-orange)";
+            if (task.priority === 'Critical' || task.priority === 'High') {
+               badgeColor = "var(--emergency-light)";
+               badgeText = "var(--emergency-red)";
+            }
+
+            if(container) {
+                const html = `
+                <div class="request-card" style="margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span class="skill-tag" style="background:${badgeColor}; color:${badgeText}; border:none;">${task.category || 'General'}</span>
+                    <span style="font-size: 11px; font-weight:600;"><i class="fas fa-tasks"></i> ${task.volunteersNeeded || 1} Needed</span>
+                  </div>
+                  <h4 class="task-title" style="font-size:14px;">${task.title || 'Support Task'}</h4>
+                  <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">${task.location || 'Anywhere'}</p>
+                  <button class="btn-action btn-primary" style="width:100%; justify-content:center; padding:5px; font-size:12px;" onclick="window.acceptTask('${taskId}')">Accept Task</button>
+                </div>
+                `;
+                container.innerHTML += html;
+            }
+          });
+        });
+    }
+
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) return;
+      currentVolunteerId = user.uid;
+
+      db.collection('tasks').where('assignedTo', '==', user.uid).onSnapshot(snapshot => {
+        const tasks = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        renderAssignedTasks(tasks);
+      });
+
+      db.collection('notifications').where('recipientId', '==', user.uid).onSnapshot(snapshot => {
+        dashboardNotifications = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        renderDashboardNotifications();
+      });
+    });
+
+    // Click outside to close notification dropdown
+    document.addEventListener('click', function(e) {
+      const container = document.getElementById('notifContainerVol');
+      const dropdown = document.getElementById('notifDropdownVol');
+      if(container && dropdown && !container.contains(e.target)) {
+         dropdown.classList.remove('active');
+      }
+    });
+
+    // Accept Task Logic
+    window.acceptTask = async function(taskId) {
+        if(!auth.currentUser) return alert("You must be logged in to accept tasks.");
+        try {
+            await window.db.collection('tasks').doc(taskId).update({
+                status: 'In Progress',
+                assignedTo: auth.currentUser.uid
+            });
+            alert("Task Successfully Accepted! You can view it in your 'My Tasks' page.");
+            window.location.href = "volunteer-tasks.html";
+        } catch(e) {
+            console.error("Error accepting task:", e);
+            alert("Failed to accept task. It may have already been taken.");
+        }
+    }
+  </script>
+</body>
+</html>
+
